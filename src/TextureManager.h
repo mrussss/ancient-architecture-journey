@@ -19,6 +19,7 @@ public:
     bool load(const std::string& id, const std::string& path);
     SDL_Texture* get(const std::string& id) const;
     bool has(const std::string& id) const;
+    bool querySize(const std::string& id, int& width, int& height) const;
 
     bool render(const std::string& id, const SDL_FRect& destination) const;
     bool render(const std::string& id, const SDL_Rect& source, const SDL_FRect& destination) const;

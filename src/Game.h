@@ -14,11 +14,17 @@
 enum class GameState {
     MainMenu,
     LevelSelect,
+    Story,
     Playing,
     Paused,
     LevelComplete,
     GameOver,
     FinalComplete
+};
+
+enum class StoryKind {
+    Intro,
+    Complete
 };
 
 class Game {
@@ -44,9 +50,13 @@ private:
 
     void loadTextures();
     void loadLevel(int levelId);
+    void startLevel(int levelId, bool showStory);
     void restartLevel();
     void completeLevel();
     void returnToLevelSelect();
+    void startStory(StoryKind kind);
+    void advanceStory();
+    std::vector<std::string> buildStoryPages(StoryKind kind) const;
 
     void updateCamera();
     void resolveHorizontalCollisions();
@@ -62,6 +72,7 @@ private:
     void renderLevel() const;
     void renderPlayer() const;
     void renderHud() const;
+    void renderStory() const;
     void renderMenuLikeScreen(const std::string& title, const std::string& subtitle) const;
     void renderButtons() const;
     void renderButton(const Button& button, bool selected) const;
@@ -85,4 +96,7 @@ private:
     int currentLevelId_{1};
     float cameraX_{0.0f};
     bool mouseDownConsumed_{false};
+    StoryKind storyKind_{StoryKind::Intro};
+    std::vector<std::string> storyPages_{};
+    std::size_t storyIndex_{0};
 };

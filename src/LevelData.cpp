@@ -106,33 +106,35 @@ LevelInfo createLevel2Huizhou() {
     level.worldWidth = 2920.0f;
     level.playerSpawn = SDL_FPoint{80.0f, kGroundY - kPlayerHeight};
 
-    addGroundRange(level, 0.0f, 690.0f);
-    addGroundRange(level, 820.0f, 560.0f);
-    addGroundRange(level, 1500.0f, 520.0f);
-    addGroundRange(level, 2140.0f, 780.0f);
+    addGroundRange(level, 0.0f, 704.0f);
+    addGroundRange(level, 808.0f, 612.0f);
+    addGroundRange(level, 1500.0f, 590.0f);
+    addGroundRange(level, 2190.0f, 730.0f);
     level.platforms.push_back(platform(380.0f, 405.0f, 180.0f, 24.0f, level.tileTextureId));
-    level.platforms.push_back(platform(620.0f, 340.0f, 190.0f, 24.0f, level.tileTextureId));
-    level.platforms.push_back(platform(910.0f, 292.0f, 260.0f, 24.0f, level.tileTextureId));
-    level.platforms.push_back(platform(1230.0f, 345.0f, 190.0f, 24.0f, level.tileTextureId));
-    level.platforms.push_back(platform(1600.0f, 410.0f, 240.0f, 24.0f, level.tileTextureId));
-    level.platforms.push_back(platform(2050.0f, 350.0f, 210.0f, 24.0f, level.tileTextureId));
-    level.platforms.push_back(platform(2370.0f, 410.0f, 230.0f, 24.0f, level.tileTextureId));
+    level.platforms.push_back(platform(610.0f, 350.0f, 190.0f, 24.0f, level.tileTextureId));
+    level.platforms.push_back(platform(850.0f, 305.0f, 250.0f, 24.0f, level.tileTextureId));
+    level.platforms.push_back(platform(1160.0f, 315.0f, 190.0f, 24.0f, level.tileTextureId));
+    level.platforms.push_back(platform(1410.0f, 380.0f, 140.0f, 24.0f, level.tileTextureId));
+    level.platforms.push_back(platform(1600.0f, 410.0f, 230.0f, 24.0f, level.tileTextureId));
+    level.platforms.push_back(platform(1865.0f, 372.0f, 150.0f, 24.0f, level.tileTextureId));
+    level.platforms.push_back(platform(2070.0f, 350.0f, 210.0f, 24.0f, level.tileTextureId));
+    level.platforms.push_back(platform(2350.0f, 410.0f, 240.0f, 24.0f, level.tileTextureId));
     level.traps = {
         trap(704.0f, 492.0f, 104.0f, 42.0f, TrapType::Spike, "trap_spike"),
-        trap(1320.0f, 452.0f, 84.0f, 24.0f, TrapType::FallingStone, "trap_falling_stone"),
-        trap(1888.0f, 452.0f, 96.0f, 24.0f, TrapType::FallingStone, "trap_falling_stone"),
-        trap(2028.0f, 492.0f, 104.0f, 42.0f, TrapType::Spike, "trap_spike"),
+        trap(1320.0f, 452.0f, 72.0f, 24.0f, TrapType::FallingStone, "trap_falling_stone"),
+        trap(1940.0f, 452.0f, 72.0f, 24.0f, TrapType::FallingStone, "trap_falling_stone"),
+        trap(2090.0f, 492.0f, 100.0f, 42.0f, TrapType::Spike, "trap_spike"),
     };
     level.enemies = {
-        Enemy(EnemyType::WoodenPuppet, SDL_FRect{1010.0f, kGroundY - 42.0f, 42.0f, 42.0f}, 860.0f, 1310.0f),
-        Enemy(EnemyType::WoodenPuppet, SDL_FRect{985.0f, 250.0f, 42.0f, 42.0f}, 910.0f, 1170.0f),
+        Enemy(EnemyType::WoodenPuppet, SDL_FRect{1010.0f, kGroundY - 42.0f, 42.0f, 42.0f}, 880.0f, 1300.0f),
+        Enemy(EnemyType::WoodenPuppet, SDL_FRect{940.0f, 263.0f, 42.0f, 42.0f}, 875.0f, 1085.0f),
     };
     level.pages = {
         page(420.0f, 365.0f),
-        page(675.0f, 300.0f),
-        page(1010.0f, 252.0f),
-        page(1665.0f, 370.0f),
-        page(2435.0f, 370.0f),
+        page(675.0f, 310.0f),
+        page(1000.0f, 265.0f),
+        page(1690.0f, 370.0f),
+        page(2415.0f, 370.0f),
     };
     level.goal = goal(2760.0f, 380.0f);
     return level;

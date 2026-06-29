@@ -73,6 +73,14 @@ bool TextureManager::has(const std::string& id) const {
     return get(id) != nullptr;
 }
 
+bool TextureManager::querySize(const std::string& id, int& width, int& height) const {
+    SDL_Texture* texture = get(id);
+    if (!texture) {
+        return false;
+    }
+    return SDL_QueryTexture(texture, nullptr, nullptr, &width, &height) == 0;
+}
+
 bool TextureManager::render(const std::string& id, const SDL_FRect& destination) const {
     SDL_Texture* texture = get(id);
     if (!texture) {

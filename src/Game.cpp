@@ -223,6 +223,8 @@ void Game::handleKeyDown(SDL_Keycode key) {
         } else if (state_ == GameState::Paused) {
             state_ = GameState::Playing;
             rebuildButtons();
+        } else if (state_ == GameState::Story) {
+            advanceStory();
         } else if (state_ == GameState::GameOver || state_ == GameState::LevelComplete) {
             returnToLevelSelect();
         } else if (state_ == GameState::LevelSelect) {
@@ -230,6 +232,13 @@ void Game::handleKeyDown(SDL_Keycode key) {
             rebuildButtons();
         } else {
             running_ = false;
+        }
+        return;
+    }
+
+    if (state_ == GameState::Story) {
+        if (key == SDLK_SPACE || key == SDLK_RETURN || key == SDLK_KP_ENTER) {
+            advanceStory();
         }
         return;
     }
@@ -280,6 +289,11 @@ void Game::handleMouseMove(int x, int y) {
 }
 
 void Game::handleMouseClick(int x, int y) {
+    if (state_ == GameState::Story) {
+        advanceStory();
+        return;
+    }
+
     for (std::size_t i = 0; i < buttons_.size(); ++i) {
         if (pointInRect(static_cast<float>(x), static_cast<float>(y), buttons_[i].rect)) {
             selectedButton_ = static_cast<int>(i);
@@ -298,8 +312,7 @@ void Game::activateSelectedButton() {
 
     if (state_ == GameState::MainMenu) {
         if (label == "START GAME") {
-            loadLevel(1);
-            state_ = GameState::Playing;
+            startLevel(1, true);
         } else if (label == "SELECT LEVEL") {
             state_ = GameState::LevelSelect;
         } else if (label == "QUIT") {
@@ -309,8 +322,7 @@ void Game::activateSelectedButton() {
         if (label == "BACK") {
             state_ = GameState::MainMenu;
         } else {
-            loadLevel(selectedButton_ + 1);
-            state_ = GameState::Playing;
+            startLevel(selectedButton_ + 1, true);
         }
     } else if (state_ == GameState::Paused) {
         if (label == "RESUME") {
@@ -332,8 +344,7 @@ void Game::activateSelectedButton() {
         }
     } else if (state_ == GameState::LevelComplete) {
         if (label == "NEXT LEVEL") {
-            loadLevel(std::min(4, currentLevelId_ + 1));
-            state_ = GameState::Playing;
+            startLevel(std::min(4, currentLevelId_ + 1), true);
         } else if (label == "RESTART") {
             restartLevel();
         } else if (label == "LEVEL SELECT") {
@@ -411,6 +422,9 @@ void Game::render() {
     } else if (state_ == GameState::LevelSelect) {
         renderBackground();
         renderMenuLikeScreen("SELECT LEVEL", "CHOOSE AN ARCHITECTURE CHAPTER");
+    } else if (state_ == GameState::Story) {
+        renderBackground();
+        renderStory();
     } else if (state_ == GameState::FinalComplete) {
         renderBackground();
         renderPanel(130.0f, 92.0f, 700.0f, 356.0f);
@@ -476,6 +490,16 @@ void Game::loadLevel(int levelId) {
     cameraX_ = 0.0f;
 }
 
+void Game::startLevel(int levelId, bool showStory) {
+    loadLevel(levelId);
+    if (showStory) {
+        startStory(StoryKind::Intro);
+    } else {
+        state_ = GameState::Playing;
+        rebuildButtons();
+    }
+}
+
 void Game::restartLevel() {
     loadLevel(currentLevelId_);
     state_ = GameState::Playing;
@@ -483,12 +507,89 @@ void Game::restartLevel() {
 }
 
 void Game::completeLevel() {
-    if (currentLevelId_ >= 4) {
+    startStory(StoryKind::Complete);
+}
+
+void Game::startStory(StoryKind kind) {
+    storyKind_ = kind;
+    storyPages_ = buildStoryPages(kind);
+    storyIndex_ = 0;
+    state_ = GameState::Story;
+    rebuildButtons();
+}
+
+void Game::advanceStory() {
+    if (storyIndex_ + 1 < storyPages_.size()) {
+        ++storyIndex_;
+        return;
+    }
+
+    if (storyKind_ == StoryKind::Intro) {
+        state_ = GameState::Playing;
+    } else if (currentLevelId_ >= 4) {
         state_ = GameState::FinalComplete;
     } else {
         state_ = GameState::LevelComplete;
     }
     rebuildButtons();
+}
+
+std::vector<std::string> Game::buildStoryPages(StoryKind kind) const {
+    if (kind == StoryKind::Intro) {
+        switch (currentLevelId_) {
+            case 1:
+                return {
+                    "XIAOYAN FINDS A BROKEN YINGZAO FASHI RUBBING IN THE DIGITAL MEDIA LAB.",
+                    "THE PAGES BECOME FOUR TIME RIFTS. THE FIRST RIFT LEADS TO AN ANCIENT STONE BRIDGE.",
+                    "LEVEL 1: CROSS THE BRIDGE AND COLLECT THE BRIDGE PAGES."
+                };
+            case 2:
+                return {
+                    "THE NEXT PAGES DRIFT INTO WHITE WALLS AND BLACK TILES.",
+                    "XIAOYAN MUST CLIMB ROOFS AND TIMBER BEAMS TO FIND THE RESIDENCE CHAPTER.",
+                    "LEVEL 2: CLIMB THE ROOFS, THEN RETURN TO THE COURTYARD GATE."
+                };
+            case 3:
+                return {
+                    "DRUMS ECHO FROM THE COUNTY OFFICE. THE PAGES HIDE AMONG STEPS AND COURT HALLS.",
+                    "THE YAMEN SHOWS ORDER, RITUAL, AND SPATIAL RANK.",
+                    "LEVEL 3: WATCH THE TRAPS AND USE HIGH PLATFORMS TO AVOID GUARDS."
+                };
+            case 4:
+                return {
+                    "THE FINAL RIFT OPENS BEFORE THE IMPERIAL HALL.",
+                    "RED WALLS, GOLDEN ROOFS, AND MARBLE TERRACES GUARD THE LAST PAGES.",
+                    "LEVEL 4: ASCEND THE TERRACES AND COMPLETE THE ANCIENT SCROLL."
+                };
+            default:
+                break;
+        }
+    }
+
+    switch (currentLevelId_) {
+        case 1:
+            return {
+                "THE BRIDGE CHAPTER RETURNS TO THE SCROLL.",
+                "XIAOYAN UNDERSTANDS HOW THE ARCH FOLLOWS WATER AND CONNECTS BOTH BANKS."
+            };
+        case 2:
+            return {
+                "THE RESIDENCE CHAPTER FITS BACK INTO PLACE.",
+                "COURTYARDS, EAVES, AND HORSE-HEAD WALLS REVEAL DAILY ORDER AND FAMILY SPACE."
+            };
+        case 3:
+            return {
+                "THE YAMEN CHAPTER IS RESTORED.",
+                "THE COUNTY OFFICE TEACHES HOW ARCHITECTURE SHAPES RITUAL, LAW, AND HIERARCHY."
+            };
+        case 4:
+            return {
+                "THE PALACE CHAPTER GLOWS WITH THE FINAL PAGES.",
+                "ALL FOUR CHAPTERS MERGE INTO A COMPLETE ANCIENT ARCHITECTURE SCROLL."
+            };
+        default:
+            return {"THE SCROLL SHIFTS AGAIN."};
+    }
 }
 
 void Game::returnToLevelSelect() {
@@ -584,8 +685,18 @@ void Game::rebuildButtons() {
 
 void Game::renderBackground() const {
     SDL_FRect full{0.0f, 0.0f, static_cast<float>(kWindowWidth), static_cast<float>(kWindowHeight)};
-    if (textures_.render(level_.backgroundTextureId, full)) {
-        return;
+    int textureWidth = 0;
+    int textureHeight = 0;
+    if (textures_.querySize(level_.backgroundTextureId, textureWidth, textureHeight) && textureWidth > 0 && textureHeight > 0) {
+        const int sourceHeight = textureHeight;
+        const int sourceWidth = std::min(textureWidth, std::max(1, static_cast<int>(static_cast<float>(sourceHeight) * static_cast<float>(kWindowWidth) / static_cast<float>(kWindowHeight))));
+        const float maxCamera = std::max(1.0f, level_.worldWidth - static_cast<float>(kWindowWidth));
+        const float scrollT = std::clamp((cameraX_ * 0.38f) / maxCamera, 0.0f, 1.0f);
+        const int sourceX = static_cast<int>(static_cast<float>(std::max(0, textureWidth - sourceWidth)) * scrollT);
+        const SDL_Rect source{sourceX, 0, sourceWidth, sourceHeight};
+        if (textures_.render(level_.backgroundTextureId, source, full)) {
+            return;
+        }
     }
 
     fillRect(full, backgroundTop(currentLevelId_));
@@ -641,7 +752,11 @@ void Game::renderLevel() const {
         if (!enemy.isAlive()) {
             continue;
         }
-        SDL_FRect dst = toScreenRect(enemy.getRect());
+        SDL_FRect collision = toScreenRect(enemy.getRect());
+        SDL_FRect dst{collision.x - 12.0f, collision.y - 18.0f, collision.w + 24.0f, collision.h + 22.0f};
+        if (enemy.type() == EnemyType::PalaceLion) {
+            dst = SDL_FRect{collision.x - 16.0f, collision.y - 24.0f, collision.w + 32.0f, collision.h + 28.0f};
+        }
         if (!textures_.render(enemy.textureId(), dst)) {
             fillRect(dst, SDL_Color{112, 83, 70, 255});
             frameRect(dst, SDL_Color{52, 40, 38, 255});
@@ -661,17 +776,40 @@ void Game::renderPlayer() const {
         return;
     }
 
-    SDL_FRect dst = toScreenRect(player_.getRect());
+    SDL_FRect collision = toScreenRect(player_.getRect());
+    SDL_FRect dst{
+        collision.x - 16.0f,
+        collision.y - 38.0f,
+        player_.isAttacking() ? 88.0f : 72.0f,
+        96.0f
+    };
     const char* texture = player_.isAttacking() ? "player_attack" : (player_.isOnGround() ? "player_idle" : "player_jump");
     if (!textures_.render(texture, dst)) {
-        fillRect(dst, SDL_Color{58, 108, 132, 255});
-        fillRect(SDL_FRect{dst.x + 8.0f, dst.y + 7.0f, 16.0f, 13.0f}, SDL_Color{235, 188, 145, 255});
+        fillRect(collision, SDL_Color{58, 108, 132, 255});
+        fillRect(SDL_FRect{collision.x + 8.0f, collision.y + 7.0f, 16.0f, 13.0f}, SDL_Color{235, 188, 145, 255});
     }
 
     if (player_.isAttacking()) {
         SDL_FRect attack = toScreenRect(player_.getAttackRect());
         fillRect(attack, SDL_Color{245, 211, 83, 75});
     }
+}
+
+void Game::renderStory() const {
+    fillRect(SDL_FRect{0.0f, 0.0f, static_cast<float>(kWindowWidth), static_cast<float>(kWindowHeight)}, SDL_Color{0, 0, 0, 86});
+
+    SDL_FRect portrait{42.0f, 225.0f, 126.0f, 168.0f};
+    if (!textures_.render("player_idle", portrait)) {
+        fillRect(portrait, SDL_Color{58, 108, 132, 255});
+    }
+
+    renderPanel(150.0f, 318.0f, 760.0f, 170.0f);
+    const std::string title = storyKind_ == StoryKind::Intro ? level_.title : "CHAPTER RESTORED";
+    drawText(title, 180.0f, 342.0f, 2, SDL_Color{246, 226, 166, 255});
+    if (!storyPages_.empty()) {
+        drawWrappedText(storyPages_[storyIndex_], 180.0f, 382.0f, 2, 680.0f, SDL_Color{238, 238, 224, 255});
+    }
+    drawText("SPACE / ENTER / CLICK", 624.0f, 462.0f, 1, SDL_Color{206, 214, 201, 255});
 }
 
 void Game::renderHud() const {

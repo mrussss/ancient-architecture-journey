@@ -100,14 +100,22 @@ def background(name: str, sky: Color, wall: Color, roof: Color) -> None:
 
 
 def tile(name: str, base: Color, line: Color) -> None:
+    target = OUT / "tiles" / name
+    if target.exists():
+        print(f"Keeping existing tile {target}")
+        return
     c = Canvas(64, 64, base)
     c.frame(0, 0, 64, 64, line, 2)
     c.rect(31, 4, 2, 56, line)
     c.rect(4, 31, 56, 2, line)
-    c.save(OUT / "tiles" / name)
+    c.save(target)
 
 
 def player(name: str, jacket: Color, arm: int = 0) -> None:
+    target = OUT / "player" / name
+    if target.exists():
+        print(f"Keeping existing player sprite {target}")
+        return
     c = Canvas(48, 64)
     c.rect(18, 43, 6, 16, (45, 61, 82, 255))
     c.rect(27, 43, 6, 16, (45, 61, 82, 255))
@@ -120,10 +128,14 @@ def player(name: str, jacket: Color, arm: int = 0) -> None:
     c.circle(24, 17, 11, (235, 188, 145, 255))
     c.rect(14, 8, 20, 8, (45, 35, 31, 255))
     c.rect(28, 17, 2, 2, (30, 28, 30, 255))
-    c.save(OUT / "player" / name)
+    c.save(target)
 
 
 def enemy(name: str, body: Color, accent: Color) -> None:
+    target = OUT / "enemies" / name
+    if target.exists():
+        print(f"Keeping existing enemy sprite {target}")
+        return
     c = Canvas(48, 48)
     c.rect(7, 16, 34, 24, body)
     c.frame(7, 16, 34, 24, (42, 35, 34, 255), 2)
@@ -132,7 +144,14 @@ def enemy(name: str, body: Color, accent: Color) -> None:
     c.rect(29, 24, 5, 5, accent)
     c.rect(10, 40, 10, 5, (42, 35, 34, 255))
     c.rect(28, 40, 10, 5, (42, 35, 34, 255))
-    c.save(OUT / "enemies" / name)
+    c.save(target)
+
+
+def save_if_missing(canvas: Canvas, path: Path, label: str) -> None:
+    if path.exists():
+        print(f"Keeping existing {label} {path}")
+        return
+    canvas.save(path)
 
 
 def main() -> None:
@@ -158,48 +177,48 @@ def main() -> None:
     page.frame(5, 3, 22, 30, (116, 76, 39, 255), 2)
     page.rect(10, 11, 12, 2, (116, 76, 39, 255))
     page.rect(10, 18, 10, 2, (116, 76, 39, 255))
-    page.save(OUT / "items" / "page.png")
+    save_if_missing(page, OUT / "items" / "page.png", "item")
 
     water = Canvas(96, 32, (54, 133, 168, 255))
     for x in range(0, 96, 16):
         water.rect(x, 9 if x % 32 == 0 else 15, 12, 3, (155, 214, 220, 255))
-    water.save(OUT / "traps" / "water.png")
+    save_if_missing(water, OUT / "traps" / "water.png", "trap")
     spike = Canvas(64, 32)
     for x in range(0, 64, 16):
         spike.tri([(x, 31), (x + 8, 5), (x + 16, 31)], (194, 198, 188, 255))
-    spike.save(OUT / "traps" / "spike.png")
+    save_if_missing(spike, OUT / "traps" / "spike.png", "trap")
     fire = Canvas(64, 32)
     for x in range(4, 60, 18):
         fire.tri([(x, 31), (x + 8, 2), (x + 18, 31)], (225, 86, 34, 255))
         fire.tri([(x + 5, 31), (x + 10, 10), (x + 15, 31)], (247, 195, 70, 255))
-    fire.save(OUT / "traps" / "fire.png")
+    save_if_missing(fire, OUT / "traps" / "fire.png", "trap")
     stone = Canvas(64, 32)
     stone.rect(8, 7, 48, 18, (115, 109, 102, 255))
     stone.frame(8, 7, 48, 18, (62, 58, 55, 255), 2)
-    stone.save(OUT / "traps" / "falling_stone.png")
+    save_if_missing(stone, OUT / "traps" / "falling_stone.png", "trap")
 
     button = Canvas(260, 58, (52, 74, 82, 235))
     button.frame(0, 0, 260, 58, (168, 182, 173, 255), 3)
-    button.save(OUT / "ui" / "button.png")
+    save_if_missing(button, OUT / "ui" / "button.png", "ui")
     selected = Canvas(260, 58, (196, 153, 76, 245))
     selected.frame(0, 0, 260, 58, (248, 226, 132, 255), 3)
-    selected.save(OUT / "ui" / "button_selected.png")
+    save_if_missing(selected, OUT / "ui" / "button_selected.png", "ui")
     panel = Canvas(128, 128, (22, 28, 30, 220))
     panel.frame(0, 0, 128, 128, (198, 170, 91, 255), 3)
-    panel.save(OUT / "ui" / "panel.png")
+    save_if_missing(panel, OUT / "ui" / "panel.png", "ui")
     heart = Canvas(24, 24)
     heart.circle(8, 8, 6, (214, 55, 62, 255))
     heart.circle(16, 8, 6, (214, 55, 62, 255))
     heart.tri([(3, 10), (21, 10), (12, 22)], (214, 55, 62, 255))
-    heart.save(OUT / "ui" / "heart.png")
+    save_if_missing(heart, OUT / "ui" / "heart.png", "ui")
     portal = Canvas(64, 96)
     portal.rect(20, 16, 24, 72, (72, 174, 188, 180))
     portal.frame(16, 10, 32, 80, (238, 209, 94, 255), 3)
-    portal.save(OUT / "ui" / "portal.png")
+    save_if_missing(portal, OUT / "ui" / "portal.png", "ui")
     logo = Canvas(256, 80, (0, 0, 0, 0))
     logo.frame(8, 12, 240, 52, (225, 189, 91, 255), 4)
     logo.rect(24, 28, 208, 16, (225, 189, 91, 255))
-    logo.save(OUT / "ui" / "title_logo.png")
+    save_if_missing(logo, OUT / "ui" / "title_logo.png", "ui")
 
     print(f"Generated assets under {OUT}")
 
