@@ -1,14 +1,16 @@
 import Phaser from 'phaser';
 import { WINDOW_HEIGHT, WINDOW_WIDTH } from '../constants';
 import { enemyTextureByType } from '../data/assets';
-import { getLevel, type LevelData, type RectData } from '../data/levels';
+import { getLevel, type LevelData } from '../data/levels';
 import { Collectible } from '../objects/Collectible';
 import { Enemy } from '../objects/Enemy';
 import { Player } from '../objects/Player';
+import { TilePlatform } from '../objects/TilePlatform';
 import { Trap } from '../objects/Trap';
+import { DebugOverlay } from '../ui/DebugOverlay';
 import { Hud } from '../ui/Hud';
 import { Controls } from '../utils/controls';
-import { validateLevel } from '../utils/levelValidation';
+import { printLevelValidationReport, validateLevel, type LevelValidationReport } from '../utils/levelValidation';
 
 interface GameSceneInitData {
   levelId: number;
@@ -24,6 +26,8 @@ export class GameScene extends Phaser.Scene {
   private pages!: Phaser.Physics.Arcade.Group;
   private goal!: Phaser.Physics.Arcade.StaticImage;
   private hud!: Hud;
+  private debugOverlay!: DebugOverlay;
+  private validationReport!: LevelValidationReport;
   private pageCount = 0;
   private completed = false;
 
@@ -38,7 +42,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   create(): void {
-    validateLevel(this.level);
+    this.validationReport = validateLevel(this.level);
     this.physics.world.setBounds(0, 0, this.level.worldWidth, this.level.worldHeight + 220);
     this.createBackground();
     this.createPlatforms();
@@ -70,11 +74,12 @@ export class GameScene extends Phaser.Scene {
 
     this.controls = new Controls(this);
     this.hud = new Hud(this, this.level);
+    this.debugOverlay = new DebugOverlay(this, this.level, this.validationReport, this.player, this.goal);
     this.hud.update(this.player.hp, this.pageCount, this.level.pages.length);
     this.cameras.main.fadeIn(180, 0, 0, 0);
   }
 
-  update(time: number): void {
+  update(time: number, delta: number): void {
     const controls = this.controls.read();
     if (controls.restartPressed) {
       this.scene.restart({ levelId: this.level.id });
@@ -84,8 +89,19 @@ export class GameScene extends Phaser.Scene {
       this.scene.start('LevelSelectScene');
       return;
     }
+    if (controls.debugPressed) {
+      this.debugOverlay.toggle();
+    }
+    if (controls.reportPressed) {
+      printLevelValidationReport(this.validationReport);
+    }
 
     this.player.updateFromControls(controls, time);
+    this.enemies.children.iterate((child) => {
+      (child as Enemy).updatePatrol(delta);
+      return true;
+    });
+    this.debugOverlay.update();
     this.hud.update(this.player.hp, this.pageCount, this.level.pages.length);
 
     if (this.player.y > this.level.worldHeight + 110) {
@@ -110,10 +126,7 @@ export class GameScene extends Phaser.Scene {
   private createPlatforms(): void {
     this.platforms = this.physics.add.staticGroup();
     for (const rect of this.level.platforms) {
-      const platform = this.platforms.create(rect.x + rect.w / 2, rect.y + rect.h / 2, rect.textureKey ?? this.level.tileKey) as Phaser.Physics.Arcade.StaticImage;
-      platform.setDisplaySize(rect.w, rect.h);
-      platform.refreshBody();
-      platform.setTint(this.tintForPlatform(rect));
+      new TilePlatform(this, this.platforms, rect, this.level.tileKey);
     }
   }
 
@@ -133,7 +146,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   private createEnemies(): void {
-    this.enemies = this.physics.add.group({ classType: Enemy, runChildUpdate: true });
+    this.enemies = this.physics.add.group({ classType: Enemy, runChildUpdate: false });
     for (const enemyData of this.level.enemies) {
       if (!this.textures.exists(enemyTextureByType[enemyData.type])) {
         console.warn(`Missing enemy texture for ${enemyData.type}`);
@@ -185,10 +198,4 @@ export class GameScene extends Phaser.Scene {
     });
   }
 
-  private tintForPlatform(rect: RectData): number {
-    if (rect.h > 40) {
-      return 0xffffff;
-    }
-    return 0xf1e2bd;
-  }
 }

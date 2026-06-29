@@ -28,6 +28,10 @@ export const imageAssets: ImageAsset[] = [
   { key: 'tile_wood', path: 'assets/images/tiles/wood_tile.png' },
   { key: 'tile_brick', path: 'assets/images/tiles/brick_tile.png' },
   { key: 'tile_palace', path: 'assets/images/tiles/palace_tile.png' },
+  { key: 'tileset_bridge', path: 'assets/images/tilesets/bridge_tile.png' },
+  { key: 'tileset_huizhou', path: 'assets/images/tilesets/huizhou_tile.png' },
+  { key: 'tileset_yamen', path: 'assets/images/tilesets/yamen_tile.png' },
+  { key: 'tileset_taihe', path: 'assets/images/tilesets/taihe_tile.png' },
 
   { key: 'item_page', path: 'assets/images/items/page.png' },
   { key: 'ui_heart', path: 'assets/images/ui/heart.png' },

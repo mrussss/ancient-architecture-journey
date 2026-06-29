@@ -7,6 +7,8 @@ export interface ControlState {
   attackPressed: boolean;
   restartPressed: boolean;
   escapePressed: boolean;
+  debugPressed: boolean;
+  reportPressed: boolean;
 }
 
 export class Controls {
@@ -15,7 +17,7 @@ export class Controls {
 
   constructor(scene: Phaser.Scene) {
     this.cursors = scene.input.keyboard!.createCursorKeys();
-    this.keys = scene.input.keyboard!.addKeys('A,D,W,S,J,R,SPACE,ENTER,ESC') as Record<string, Phaser.Input.Keyboard.Key>;
+    this.keys = scene.input.keyboard!.addKeys('A,D,W,S,J,R,SPACE,ENTER,ESC,F2,F3') as Record<string, Phaser.Input.Keyboard.Key>;
   }
 
   read(): ControlState {
@@ -25,7 +27,9 @@ export class Controls {
       jumpPressed: Phaser.Input.Keyboard.JustDown(this.keys.SPACE) || Phaser.Input.Keyboard.JustDown(this.cursors.up),
       attackPressed: Phaser.Input.Keyboard.JustDown(this.keys.J),
       restartPressed: Phaser.Input.Keyboard.JustDown(this.keys.R),
-      escapePressed: Phaser.Input.Keyboard.JustDown(this.keys.ESC)
+      escapePressed: Phaser.Input.Keyboard.JustDown(this.keys.ESC),
+      debugPressed: Phaser.Input.Keyboard.JustDown(this.keys.F2),
+      reportPressed: Phaser.Input.Keyboard.JustDown(this.keys.F3)
     };
   }
 }

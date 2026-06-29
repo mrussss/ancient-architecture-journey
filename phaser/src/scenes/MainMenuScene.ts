@@ -29,6 +29,12 @@ export class MainMenuScene extends Phaser.Scene {
       new Button(this, WINDOW_WIDTH / 2, 322, 280, 54, 'Select Level', () => this.scene.start('LevelSelectScene')),
       new Button(this, WINDOW_WIDTH / 2, 389, 280, 54, 'Credits / About', () => this.showAbout())
     ];
+    new Button(this, WINDOW_WIDTH - 112, 42, 150, 38, 'Fullscreen', () => this.toggleFullscreen());
+    this.add.text(18, WINDOW_HEIGHT - 24, 'Phaser Remake · F2 Debug Overlay', {
+      fontFamily: 'Arial, sans-serif',
+      fontSize: '14px',
+      color: '#dce6d6'
+    }).setOrigin(0, 0.5);
     this.updateSelection();
 
     this.input.keyboard!.on('keydown-UP', () => this.moveSelection(-1));
@@ -48,6 +54,14 @@ export class MainMenuScene extends Phaser.Scene {
       fontSize: '18px',
       color: '#dce6d6'
     }).setOrigin(0.5);
+  }
+
+  private toggleFullscreen(): void {
+    if (this.scale.isFullscreen) {
+      this.scale.stopFullscreen();
+      return;
+    }
+    this.scale.startFullscreen();
   }
 
   private moveSelection(delta: number): void {

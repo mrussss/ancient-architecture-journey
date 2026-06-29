@@ -21,21 +21,36 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
     this.setDisplaySize(data.type === 'palaceLion' ? 80 : 72, data.type === 'yamenGuard' ? 72 : 64);
     this.body!.setSize(data.w, data.h);
     this.body!.setOffset((this.width - data.w) * 0.5, this.height - data.h);
-    (this.body as Phaser.Physics.Arcade.Body).setVelocityX(this.speed);
+    const body = this.body as Phaser.Physics.Arcade.Body;
+    body.setAllowGravity(true);
+    body.setCollideWorldBounds(false);
+    body.setVelocityX(this.speed);
   }
 
   preUpdate(time: number, delta: number): void {
     super.preUpdate(time, delta);
+  }
+
+  updatePatrol(_delta: number): void {
+    if (!this.active || !this.body) {
+      return;
+    }
     const body = this.body as Phaser.Physics.Arcade.Body;
-    if (this.x < this.leftLimit) {
+    if (this.x <= this.leftLimit) {
       this.x = this.leftLimit;
       body.setVelocityX(Math.abs(this.speed));
       this.setFlipX(false);
-    } else if (this.x > this.rightLimit) {
+    } else if (this.x >= this.rightLimit) {
       this.x = this.rightLimit;
       body.setVelocityX(-Math.abs(this.speed));
       this.setFlipX(true);
+    } else if (Math.abs(body.velocity.x) < 1) {
+      const direction = this.flipX ? -1 : 1;
+      body.setVelocityX(direction * this.speed);
     }
+
+    this.x = Phaser.Math.Clamp(this.x, this.leftLimit, this.rightLimit);
+    this.setFlipX(body.velocity.x < 0);
   }
 
   hit(): void {

@@ -24,10 +24,12 @@ export class Button extends Phaser.GameObjects.Container {
     this.add([this.background, this.label]);
     scene.add.existing(this);
 
-    this.setInteractive(
-      new Phaser.Geom.Rectangle(-width / 2, -height / 2, width, height),
-      Phaser.Geom.Rectangle.Contains
-    )
+    this.background
+      .setInteractive({
+        hitArea: new Phaser.Geom.Rectangle(-width / 2 - 8, -height / 2 - 8, width + 16, height + 16),
+        hitAreaCallback: Phaser.Geom.Rectangle.Contains,
+        useHandCursor: true
+      })
       .on('pointerover', () => this.setSelected(true))
       .on('pointerout', () => this.setSelected(false))
       .on('pointerdown', () => this.press());
@@ -38,6 +40,8 @@ export class Button extends Phaser.GameObjects.Container {
     this.background.setFillStyle(value ? 0xb88743 : 0x3d5260, 0.95);
     this.background.setStrokeStyle(2, value ? 0xffe08a : 0xd7bd6a);
     this.label.setColor(value ? '#ffffff' : '#fff3d0');
+    this.scene.tweens.killTweensOf(this);
+    this.scene.tweens.add({ targets: this, scale: value ? 1.03 : 1, duration: 80 });
     return this;
   }
 
@@ -46,6 +50,12 @@ export class Button extends Phaser.GameObjects.Container {
   }
 
   press(): void {
+    this.scene.tweens.add({
+      targets: this,
+      scale: 0.97,
+      duration: 45,
+      yoyo: true
+    });
     this.onClick();
   }
 }
