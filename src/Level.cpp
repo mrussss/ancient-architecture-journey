@@ -75,7 +75,7 @@ void Level::parseLines(const std::vector<std::string>& lines) {
 
             switch (lines[row][col]) {
                 case '#':
-                    platforms_.push_back(Entity{SDL_FRect{x, y, kTileSize, kTileSize}, EntityType::Platform, true});
+                    platforms_.push_back(Entity{SDL_FRect{x, y, kTileSize, kTileSize}, EntityType::Platform, true, "tile_stone"});
                     break;
                 case 'P':
                     playerSpawn_ = SDL_FPoint{x, y + kTileSize - kPlayerHeight};

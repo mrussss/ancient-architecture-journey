@@ -17,6 +17,11 @@ set(MARIO_SOURCES
     src/Player.cpp
     src/Entity.cpp
     src/Level.cpp
+    src/LevelData.cpp
+    src/Enemy.cpp
+    src/Trap.cpp
+    src/Collectible.cpp
+    src/UI.cpp
     src/Collision.cpp
     src/TextureManager.cpp
 )
