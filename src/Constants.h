@@ -1,0 +1,14 @@
+#pragma once
+
+constexpr int kWindowWidth = 960;
+constexpr int kWindowHeight = 540;
+constexpr int kTargetFps = 60;
+
+constexpr float kTileSize = 32.0f;
+constexpr float kPlayerWidth = 32.0f;
+constexpr float kPlayerHeight = 48.0f;
+constexpr float kPlayerMoveSpeed = 260.0f;
+constexpr float kPlayerJumpVelocity = -760.0f;
+constexpr float kGravity = 2000.0f;
+constexpr float kMaxFallSpeed = 980.0f;
+constexpr float kMaxDeltaTime = 1.0f / 20.0f;
