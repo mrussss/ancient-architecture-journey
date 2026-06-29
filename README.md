@@ -71,6 +71,25 @@ sudo apt-get install cmake g++ pkg-config libsdl2-dev libsdl2-image-dev
 SDL_VIDEODRIVER=dummy ./build/mario_like --smoke-test
 ```
 
+## Phaser 重写版
+
+当前仓库同时包含 C++ / SDL2 版本和 Phaser 3 网页版本。Phaser 版位于 `phaser/`，复用根目录 `assets/images` 素材，运行前会自动同步到 `phaser/public/assets/images`。
+
+```bash
+cd phaser
+npm install
+npm run dev
+```
+
+构建：
+
+```bash
+cd phaser
+npm run build
+```
+
+Phaser 版实现了主菜单、关卡选择、剧情页、四关平台闯关、HUD、敌人、陷阱、残页收集、Game Over、Level Complete 和最终结局。
+
 ## 操作
 
 - A / Left：向左移动
