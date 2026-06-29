@@ -471,6 +471,7 @@ void Game::loadTextures() {
 void Game::loadLevel(int levelId) {
     currentLevelId_ = std::clamp(levelId, 1, 4);
     level_ = createLevelById(currentLevelId_);
+    validateLevelDesign(level_);
     player_.reset(level_.playerSpawn.x, level_.playerSpawn.y);
     cameraX_ = 0.0f;
 }

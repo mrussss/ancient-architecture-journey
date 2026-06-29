@@ -32,3 +32,4 @@ LevelInfo createLevel2Huizhou();
 LevelInfo createLevel3Yamen();
 LevelInfo createLevel4Taihe();
 LevelInfo createLevelById(int id);
+void validateLevelDesign(const LevelInfo& level);

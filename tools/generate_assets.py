@@ -85,6 +85,10 @@ class Canvas:
 
 
 def background(name: str, sky: Color, wall: Color, roof: Color) -> None:
+    target = OUT / "backgrounds" / name
+    if target.exists():
+        print(f"Keeping existing background {target}")
+        return
     c = Canvas(960, 540, sky)
     c.rect(0, 360, 960, 180, (56, 88, 74, 255))
     for x in range(-40, 980, 170):
@@ -92,7 +96,7 @@ def background(name: str, sky: Color, wall: Color, roof: Color) -> None:
         c.tri([(x - 16, 262), (x + 58, 218), (x + 132, 262)], roof)
         c.rect(x + 18, 306, 22, 54, (53, 45, 39, 255))
         c.rect(x + 66, 292, 28, 24, (82, 105, 116, 255))
-    c.save(OUT / "backgrounds" / name)
+    c.save(target)
 
 
 def tile(name: str, base: Color, line: Color) -> None:

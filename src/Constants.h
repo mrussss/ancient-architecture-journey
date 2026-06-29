@@ -5,8 +5,8 @@ constexpr int kWindowHeight = 540;
 constexpr int kTargetFps = 60;
 
 constexpr float kTileSize = 32.0f;
-constexpr float kPlayerWidth = 32.0f;
-constexpr float kPlayerHeight = 48.0f;
+constexpr float kPlayerWidth = 40.0f;
+constexpr float kPlayerHeight = 56.0f;
 constexpr float kPlayerMoveSpeed = 260.0f;
 constexpr float kPlayerJumpVelocity = -760.0f;
 constexpr float kGravity = 2000.0f;
