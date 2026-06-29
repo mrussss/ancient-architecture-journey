@@ -17,11 +17,15 @@
 namespace {
 constexpr float kPi = 3.14159265358979323846f;
 constexpr float kWorldWidth = 2200.0f;
-constexpr float kMaxStepUp = 22.0f;
-constexpr SDL_FRect kNpcRect{420.0f, 156.0f, 64.0f, 96.0f};
-constexpr SDL_FRect kPlayerSpawnRect{480.0f, 204.0f, kPlayerWidth, kPlayerHeight};
-constexpr SDL_FRect kBridgeBackRect{520.0f, 120.0f, 900.0f, 300.0f};
-constexpr SDL_FRect kBridgeFrontRect{520.0f, 188.0f, 900.0f, 120.0f};
+constexpr float kMaxStepUp = 30.0f;
+constexpr SDL_FRect kNpcRect{310.0f, 200.0f, 64.0f, 96.0f};
+constexpr SDL_FRect kPlayerSpawnRect{180.0f, 248.0f, kPlayerWidth, kPlayerHeight};
+constexpr SDL_FRect kBridgeBackRect{340.0f, 80.0f, 1500.0f, 380.0f};
+constexpr SDL_FRect kBridgeFrontRect{340.0f, 64.0f, 1500.0f, 160.0f};
+constexpr SDL_FRect kLeftBankRect{20.0f, 236.0f, 420.0f, 180.0f};
+constexpr SDL_FRect kRightBankRect{1740.0f, 236.0f, 420.0f, 180.0f};
+constexpr SDL_FRect kLeftRampRect{350.0f, 188.0f, 360.0f, 130.0f};
+constexpr SDL_FRect kRightRampRect{1490.0f, 188.0f, 360.0f, 130.0f};
 constexpr SDL_FRect kDialogRect{40.0f, 370.0f, 880.0f, 140.0f};
 
 float clampCamera(float cameraX) {
@@ -385,6 +389,7 @@ void Game::render() {
     renderAncientBackground(!hasBridgeBack);
     renderCutsceneWater();
     renderBridgeBack();
+    renderBridgeApproaches();
     renderLevel();
     renderNpc();
     renderPlayer();
@@ -400,13 +405,15 @@ void Game::render() {
 void Game::resetGame() {
     level_.loadFromFile(levelPath());
     bridgePlatforms_ = {
-        Entity{SDL_FRect{300.0f, 284.0f, 170.0f, 32.0f}, EntityType::Platform, true},
-        Entity{SDL_FRect{470.0f, 252.0f, 220.0f, 32.0f}, EntityType::Platform, true},
-        Entity{SDL_FRect{690.0f, 236.0f, 220.0f, 32.0f}, EntityType::Platform, true},
-        Entity{SDL_FRect{910.0f, 220.0f, 260.0f, 32.0f}, EntityType::Platform, true},
-        Entity{SDL_FRect{1170.0f, 236.0f, 220.0f, 32.0f}, EntityType::Platform, true},
-        Entity{SDL_FRect{1390.0f, 252.0f, 250.0f, 32.0f}, EntityType::Platform, true},
-        Entity{SDL_FRect{1640.0f, 284.0f, 220.0f, 32.0f}, EntityType::Platform, true},
+        Entity{SDL_FRect{100.0f, 296.0f, 280.0f, 32.0f}, EntityType::Platform, true},
+        Entity{SDL_FRect{380.0f, 280.0f, 180.0f, 32.0f}, EntityType::Platform, true},
+        Entity{SDL_FRect{560.0f, 256.0f, 200.0f, 32.0f}, EntityType::Platform, true},
+        Entity{SDL_FRect{760.0f, 232.0f, 210.0f, 32.0f}, EntityType::Platform, true},
+        Entity{SDL_FRect{970.0f, 212.0f, 240.0f, 32.0f}, EntityType::Platform, true},
+        Entity{SDL_FRect{1210.0f, 232.0f, 210.0f, 32.0f}, EntityType::Platform, true},
+        Entity{SDL_FRect{1420.0f, 256.0f, 200.0f, 32.0f}, EntityType::Platform, true},
+        Entity{SDL_FRect{1620.0f, 280.0f, 180.0f, 32.0f}, EntityType::Platform, true},
+        Entity{SDL_FRect{1800.0f, 296.0f, 270.0f, 32.0f}, EntityType::Platform, true},
     };
     player_.reset(kPlayerSpawnRect.x, kPlayerSpawnRect.y);
     state_ = GameState::Playing;
@@ -485,20 +492,30 @@ void Game::loadTextures() {
     textures_.load("lichun_portrait", imagePath("npc/lichun_portrait.png"));
     textures_.load("bridge_back", imagePath("bridge/zhaozhou_bridge_back.png"));
     textures_.load("bridge_front", imagePath("bridge/zhaozhou_bridge_front.png"));
+    textures_.load("left_bank", imagePath("bridge/left_bank.png"));
+    textures_.load("right_bank", imagePath("bridge/right_bank.png"));
+    textures_.load("bridge_ramp_left", imagePath("bridge/bridge_ramp_left.png"));
+    textures_.load("bridge_ramp_right", imagePath("bridge/bridge_ramp_right.png"));
     textures_.load("bridge_walkway_tile", imagePath("bridge/bridge_walkway_tile.png"));
+    textures_.load("bridge_slope_tile_left", imagePath("bridge/bridge_slope_tile_left.png"));
+    textures_.load("bridge_slope_tile_right", imagePath("bridge/bridge_slope_tile_right.png"));
     textures_.load("stone_tile", imagePath("bridge/stone_tile.png"));
     textures_.load("water_base", imagePath("water/water_base.png"));
     textures_.load("water_wave", imagePath("water/water_wave_strip.png"));
+    textures_.load("water_arch_main", imagePath("water/water_arch_main_strip.png"));
+    textures_.load("water_arch_side", imagePath("water/water_arch_side_strip.png"));
+    textures_.load("water_rise", imagePath("water/water_rise_overlay.png"));
     textures_.load("dialog_box", imagePath("ui/dialog_box.png"));
+    textures_.load("info_panel", imagePath("ui/info_panel.png"));
     textures_.load("name_box", imagePath("ui/name_box.png"));
     textures_.load("next_arrow", imagePath("ui/next_arrow.png"));
 }
 
 void Game::resetTriggers() {
     triggers_ = {
-        TriggerZone{SDL_FRect{382.0f, 138.0f, 150.0f, 140.0f}, TriggerType::NpcDialog, false},
-        TriggerZone{SDL_FRect{930.0f, 168.0f, 170.0f, 120.0f}, TriggerType::BridgeCenterCutscene, false},
-        TriggerZone{SDL_FRect{1780.0f, 220.0f, 90.0f, 120.0f}, TriggerType::LevelExit, false},
+        TriggerZone{SDL_FRect{270.0f, 184.0f, 170.0f, 140.0f}, TriggerType::NpcDialog, false},
+        TriggerZone{SDL_FRect{1010.0f, 150.0f, 170.0f, 130.0f}, TriggerType::BridgeCenterCutscene, false},
+        TriggerZone{SDL_FRect{1900.0f, 236.0f, 120.0f, 120.0f}, TriggerType::LevelExit, false},
     };
 }
 
@@ -651,18 +668,35 @@ void Game::renderAncientBackground(bool drawCodeBridge) const {
 }
 
 void Game::renderLevel() const {
-    for (const Entity& platform : bridgePlatforms_) {
+    for (std::size_t index = 0; index < bridgePlatforms_.size(); ++index) {
+        const Entity& platform = bridgePlatforms_[index];
         bool renderedTile = false;
+        const std::string tileId =
+            index >= 1 && index <= 3 ? "bridge_slope_tile_left" :
+            index >= 5 && index <= 7 ? "bridge_slope_tile_right" :
+            "bridge_walkway_tile";
         for (float x = platform.rect.x; x < platform.rect.x + platform.rect.w; x += kTileSize) {
-            SDL_FRect tileRect{x - cameraX_, platform.rect.y, kTileSize, kTileSize};
-            if (textures_.render("bridge_walkway_tile", tileRect)) {
+            SDL_FRect tileRect{x - cameraX_, platform.rect.y - 8.0f, kTileSize, 14.0f};
+            if (textures_.render(tileId, tileRect)) {
                 renderedTile = true;
             }
         }
         if (!renderedTile) {
-            renderStonePlatform(renderer_, toScreenRect(platform.rect));
+            const SDL_FRect marker{platform.rect.x, platform.rect.y - 4.0f, platform.rect.w, 6.0f};
+            renderStonePlatform(renderer_, toScreenRect(marker));
         }
     }
+}
+
+void Game::renderBridgeApproaches() const {
+    if (!textures_.render("left_bank", toScreenRect(kLeftBankRect))) {
+        fillRect(renderer_, kLeftBankRect.x - cameraX_, kLeftBankRect.y + 58.0f, kLeftBankRect.w, 122.0f, SDL_Color{93, 112, 86, 255});
+    }
+    if (!textures_.render("right_bank", toScreenRect(kRightBankRect))) {
+        fillRect(renderer_, kRightBankRect.x - cameraX_, kRightBankRect.y + 58.0f, kRightBankRect.w, 122.0f, SDL_Color{93, 112, 86, 255});
+    }
+    textures_.render("bridge_ramp_left", toScreenRect(kLeftRampRect));
+    textures_.render("bridge_ramp_right", toScreenRect(kRightRampRect));
 }
 
 void Game::renderNpc() const {
@@ -750,29 +784,27 @@ void Game::renderCutsceneWater() const {
 
     const float t = cutscene_.timer;
     const float rise = std::min(t / 1.5f, 1.0f);
-    const float waterTop = 405.0f - rise * 115.0f;
-    fillRect(renderer_, 0.0f, waterTop, static_cast<float>(kWindowWidth), 540.0f - waterTop, SDL_Color{49, 111, 142, 165});
+    const float overlayTop = kBridgeBackRect.y + 300.0f - rise * 150.0f;
+    const SDL_FRect riseRect{kBridgeBackRect.x - cameraX_, overlayTop, kBridgeBackRect.w, 260.0f};
+    if (!textures_.render("water_rise", riseRect)) {
+        fillRect(renderer_, riseRect.x, riseRect.y, riseRect.w, riseRect.h, SDL_Color{49, 111, 142, 165});
+    }
 
     if (t > 2.0f) {
         const int frame = static_cast<int>(t * 8.0f) % 4;
-        const SDL_Rect source{frame * 96, 0, 96, 32};
-        for (int i = 0; i < 5; ++i) {
-            const float offset = std::fmod(t * 54.0f + static_cast<float>(i) * 42.0f, 190.0f);
-            textures_.render(
-                "water_wave",
-                source,
-                SDL_FRect{kBridgeBackRect.x + 355.0f + offset - cameraX_, kBridgeBackRect.y + 225.0f + static_cast<float>(i % 2) * 12.0f, 96.0f, 32.0f}
-            );
-            textures_.render(
-                "water_wave",
-                source,
-                SDL_FRect{kBridgeBackRect.x + 160.0f + offset * 0.45f - cameraX_, kBridgeBackRect.y + 210.0f, 72.0f, 24.0f}
-            );
-            textures_.render(
-                "water_wave",
-                source,
-                SDL_FRect{kBridgeBackRect.x + 625.0f + offset * 0.45f - cameraX_, kBridgeBackRect.y + 210.0f, 72.0f, 24.0f}
-            );
+        const SDL_Rect mainSource{frame * 360, 0, 360, 150};
+        const SDL_Rect sideSource{frame * 160, 0, 160, 72};
+        const SDL_FRect mainFlow{kBridgeBackRect.x + 570.0f - cameraX_, kBridgeBackRect.y + 202.0f, 360.0f, 150.0f};
+        const SDL_FRect leftFlow{kBridgeBackRect.x + 310.0f - cameraX_, kBridgeBackRect.y + 204.0f, 160.0f, 72.0f};
+        const SDL_FRect rightFlow{kBridgeBackRect.x + 1030.0f - cameraX_, kBridgeBackRect.y + 204.0f, 160.0f, 72.0f};
+        if (!textures_.render("water_arch_main", mainSource, mainFlow)) {
+            fillRect(renderer_, mainFlow.x, mainFlow.y + 30.0f, mainFlow.w, 70.0f, SDL_Color{72, 150, 170, 170});
+        }
+        if (!textures_.render("water_arch_side", sideSource, leftFlow)) {
+            fillRect(renderer_, leftFlow.x, leftFlow.y + 18.0f, leftFlow.w, 34.0f, SDL_Color{72, 150, 170, 150});
+        }
+        if (!textures_.render("water_arch_side", sideSource, rightFlow)) {
+            fillRect(renderer_, rightFlow.x, rightFlow.y + 18.0f, rightFlow.w, 34.0f, SDL_Color{72, 150, 170, 150});
         }
     }
 }
@@ -785,13 +817,16 @@ void Game::renderCutsceneOverlay() const {
     const float t = cutscene_.timer;
     const SDL_Color highlight{245, 210, 96, static_cast<Uint8>((std::sin(t * 6.0f) * 0.5f + 0.5f) * 95.0f + 110.0f)};
     if (t > 1.2f) {
-        carveArch(renderer_, kBridgeBackRect.x + 450.0f - cameraX_, kBridgeBackRect.y + 231.0f, 152.0f, 108.0f, SDL_Color{0, 0, 0, 0}, highlight);
-        carveArch(renderer_, kBridgeBackRect.x + 215.0f - cameraX_, kBridgeBackRect.y + 218.0f, 62.0f, 43.0f, SDL_Color{0, 0, 0, 0}, highlight);
-        carveArch(renderer_, kBridgeBackRect.x + 685.0f - cameraX_, kBridgeBackRect.y + 218.0f, 62.0f, 43.0f, SDL_Color{0, 0, 0, 0}, highlight);
+        carveArch(renderer_, kBridgeBackRect.x + 750.0f - cameraX_, kBridgeBackRect.y + 320.0f, 284.0f, 188.0f, SDL_Color{0, 0, 0, 0}, highlight);
+        carveArch(renderer_, kBridgeBackRect.x + 390.0f - cameraX_, kBridgeBackRect.y + 255.0f, 92.0f, 64.0f, SDL_Color{0, 0, 0, 0}, highlight);
+        carveArch(renderer_, kBridgeBackRect.x + 1110.0f - cameraX_, kBridgeBackRect.y + 255.0f, 92.0f, 64.0f, SDL_Color{0, 0, 0, 0}, highlight);
     }
 
     if (t > 3.2f) {
-        fillRect(renderer_, 170.0f, 32.0f, 620.0f, 74.0f, SDL_Color{236, 218, 160, 220});
+        const SDL_FRect infoRect{180.0f, 28.0f, 600.0f, 90.0f};
+        if (!textures_.render("info_panel", infoRect)) {
+            fillRect(renderer_, infoRect.x, infoRect.y, infoRect.w, infoRect.h, SDL_Color{236, 218, 160, 220});
+        }
         drawWrappedText("WHEN THE WATER RISES THE MAIN ARCH AND SIDE ARCHES SHARE THE FLOW AND KEEP THE BRIDGE STEADY", 192.0f, 52.0f, 3, 574.0f, SDL_Color{45, 58, 54, 255});
     }
 }

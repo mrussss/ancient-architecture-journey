@@ -70,6 +70,7 @@ private:
 
     void renderAncientBackground(bool drawCodeBridge) const;
     void renderLevel() const;
+    void renderBridgeApproaches() const;
     void renderNpc() const;
     void renderPlayer() const;
     void renderBridgeBack() const;
