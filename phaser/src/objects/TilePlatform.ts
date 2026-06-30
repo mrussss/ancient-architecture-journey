@@ -30,8 +30,9 @@ export class TilePlatform {
     shadow.setOrigin(0.5);
     shadow.setDepth(3);
 
+    const collisionWidth = this.kind === 'oneWay' ? rect.w + 10 : rect.w;
     this.collider = group.create(centerX, centerY, tileKey) as Phaser.Physics.Arcade.StaticImage;
-    this.collider.setDisplaySize(rect.w, rect.h);
+    this.collider.setDisplaySize(collisionWidth, rect.h);
     this.collider.setVisible(false);
     this.collider.refreshBody();
   }

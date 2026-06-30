@@ -168,7 +168,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     }
     const body = this.body as Phaser.Physics.Arcade.Body;
     body.setSize(PLAYER_WIDTH, PLAYER_HEIGHT);
-    body.setOffset((this.width - PLAYER_WIDTH) * 0.5, this.height - PLAYER_HEIGHT);
+    body.setOffset((this.width - PLAYER_WIDTH) * 0.5, this.height - PLAYER_HEIGHT - 2);
   }
 
   private updateAttackHitbox(): void {

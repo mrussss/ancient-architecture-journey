@@ -169,7 +169,13 @@ export class GameScene extends Phaser.Scene {
   ): boolean {
     const playerBody = playerObject.body as Phaser.Physics.Arcade.Body;
     const platformBody = platformObject.body as Phaser.Physics.Arcade.StaticBody;
-    return playerBody.velocity.y >= 0 && playerBody.bottom <= platformBody.top + 10;
+    const platformTop = platformBody.top;
+    const currentBottom = playerBody.bottom;
+    const previousBottom = playerBody.position.y - playerBody.deltaY() + playerBody.height;
+    const isFallingOrNearlyFalling = playerBody.velocity.y >= -20;
+    const wasAbovePlatform = previousBottom <= platformTop + 16;
+    const isCloseToPlatformTop = currentBottom <= platformTop + 28;
+    return isFallingOrNearlyFalling && wasAbovePlatform && isCloseToPlatformTop;
   }
 
   private createTraps(): void {

@@ -1,8 +1,8 @@
 export const WINDOW_WIDTH = 960;
 export const WINDOW_HEIGHT = 540;
 
-export const PLAYER_WIDTH = 40;
-export const PLAYER_HEIGHT = 56;
+export const PLAYER_WIDTH = 42;
+export const PLAYER_HEIGHT = 78;
 export const PLAYER_SPEED = 260;
 export const PLAYER_JUMP_VELOCITY = -760;
 export const GRAVITY = 2000;

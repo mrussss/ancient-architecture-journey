@@ -6,15 +6,16 @@ export class Collectible extends Phaser.Physics.Arcade.Sprite {
   private glow: Phaser.GameObjects.Ellipse;
 
   constructor(scene: Phaser.Scene, x: number, y: number) {
-    super(scene, x + 18, y + 18, 'item_page');
-    this.baseY = y + 18;
+    super(scene, x, y, 'item_page');
+    this.baseY = y;
     scene.add.existing(this);
     scene.physics.add.existing(this);
-    this.setDisplaySize(42, 42);
+    this.setOrigin(0.5, 0.5);
+    this.setDisplaySize(42, 50);
     this.setDepth(40);
-    this.body!.setAllowGravity(false);
-    this.body!.setSize(30, 32);
-    this.body!.setOffset(33, 32);
+    const body = this.body as Phaser.Physics.Arcade.Body;
+    body.setAllowGravity(false);
+    this.centerBody(body, 32, 40);
     this.glow = scene.add
       .ellipse(this.x, this.y, 58, 58, 0xffd76a, 0.2)
       .setBlendMode(Phaser.BlendModes.ADD)
@@ -52,5 +53,12 @@ export class Collectible extends Phaser.Physics.Arcade.Sprite {
         onDone();
       }
     });
+  }
+
+  private centerBody(body: Phaser.Physics.Arcade.Body, worldWidth: number, worldHeight: number): void {
+    const sourceWidth = worldWidth / this.scaleX;
+    const sourceHeight = worldHeight / this.scaleY;
+    body.setSize(sourceWidth, sourceHeight);
+    body.setOffset((this.width - sourceWidth) * 0.5, (this.height - sourceHeight) * 0.5);
   }
 }
