@@ -11,23 +11,23 @@ export class DialogueBox {
   private readonly charsPerSecond = 34;
 
   constructor(private scene: Phaser.Scene) {
-    this.panel = scene.add.rectangle(480, 434, 840, 160, 0x11181c, 0.82).setStrokeStyle(2, 0xd7bd6a);
+    this.panel = scene.add.rectangle(480, 434, 840, 160, 0x11181c, 0.82).setStrokeStyle(2, 0xd7bd6a).setDepth(30);
     this.speakerText = scene.add.text(90, 370, '', {
       fontFamily: 'Arial, "Microsoft YaHei", sans-serif',
       fontSize: '22px',
       color: '#ffe08a'
-    });
+    }).setDepth(31);
     this.bodyText = scene.add.text(90, 405, '', {
       fontFamily: 'Arial, "Microsoft YaHei", sans-serif',
       fontSize: '22px',
       color: '#fff8e8',
       wordWrap: { width: 780 }
-    });
+    }).setDepth(31);
     scene.add.text(710, 492, 'Space / Enter / Click', {
       fontFamily: 'Arial, sans-serif',
       fontSize: '14px',
       color: '#cdd8c9'
-    });
+    }).setDepth(31);
   }
 
   setPage(page: StoryPage): void {

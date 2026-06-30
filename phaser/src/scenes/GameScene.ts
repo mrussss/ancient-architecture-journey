@@ -116,10 +116,11 @@ export class GameScene extends Phaser.Scene {
   }
 
   private createBackground(): void {
-    this.add.tileSprite(0, 0, this.level.worldWidth, WINDOW_HEIGHT, this.level.backgroundKey)
+    this.add.image(0, 0, this.level.backgroundKey)
       .setOrigin(0, 0)
-      .setScrollFactor(0.28, 0)
+      .setScrollFactor(0.35, 0)
       .setDisplaySize(this.level.worldWidth, WINDOW_HEIGHT);
+    this.add.rectangle(0, 0, this.level.worldWidth, WINDOW_HEIGHT, 0x10202c, 0.08).setOrigin(0, 0).setScrollFactor(0.35, 0);
     this.add.rectangle(0, 488, this.level.worldWidth, 52, 0x101215, 0.18).setOrigin(0, 0);
   }
 

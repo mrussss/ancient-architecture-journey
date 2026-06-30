@@ -30,6 +30,19 @@ export class PreloadScene extends Phaser.Scene {
   }
 
   create(): void {
+    if (!this.anims.exists('xiaoyan-walk')) {
+      this.anims.create({
+        key: 'xiaoyan-walk',
+        frames: [
+          { key: 'player_walk_1' },
+          { key: 'player_walk_2' },
+          { key: 'player_walk_3' },
+          { key: 'player_walk_4' }
+        ],
+        frameRate: 8,
+        repeat: -1
+      });
+    }
     this.scene.start('MainMenuScene');
   }
 }

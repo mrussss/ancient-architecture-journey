@@ -2,12 +2,15 @@ import Phaser from 'phaser';
 import { enemyTextureByType } from '../data/assets';
 import type { EnemyData, EnemyType } from '../data/levels';
 
+const ENEMY_DEFAULT_FACING: 'left' | 'right' = 'left';
+
 export class Enemy extends Phaser.Physics.Arcade.Sprite {
   hp = 1;
   damageAmount = 1;
   private speed = 74;
   private leftLimit: number;
   private rightLimit: number;
+  private lastDirection: -1 | 1 = 1;
   readonly enemyType: EnemyType;
 
   constructor(scene: Phaser.Scene, data: EnemyData) {
@@ -25,6 +28,16 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
     body.setAllowGravity(true);
     body.setCollideWorldBounds(false);
     body.setVelocityX(this.speed);
+    this.syncFacing();
+    scene.tweens.add({
+      targets: this,
+      scaleY: this.scaleY * 1.04,
+      angle: 1.5,
+      duration: 520,
+      yoyo: true,
+      repeat: -1,
+      ease: 'Sine.easeInOut'
+    });
   }
 
   preUpdate(time: number, delta: number): void {
@@ -36,21 +49,30 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
       return;
     }
     const body = this.body as Phaser.Physics.Arcade.Body;
+    if (body.blocked.left || body.touching.left) {
+      this.lastDirection = 1;
+      body.setVelocityX(Math.abs(this.speed));
+    }
+    if (body.blocked.right || body.touching.right) {
+      this.lastDirection = -1;
+      body.setVelocityX(-Math.abs(this.speed));
+    }
     if (this.x <= this.leftLimit) {
       this.x = this.leftLimit;
+      this.lastDirection = 1;
       body.setVelocityX(Math.abs(this.speed));
-      this.setFlipX(false);
     } else if (this.x >= this.rightLimit) {
       this.x = this.rightLimit;
+      this.lastDirection = -1;
       body.setVelocityX(-Math.abs(this.speed));
-      this.setFlipX(true);
     } else if (Math.abs(body.velocity.x) < 1) {
-      const direction = this.flipX ? -1 : 1;
-      body.setVelocityX(direction * this.speed);
+      body.setVelocityX(this.lastDirection * this.speed);
+    } else {
+      this.lastDirection = body.velocity.x > 0 ? 1 : -1;
     }
 
     this.x = Phaser.Math.Clamp(this.x, this.leftLimit, this.rightLimit);
-    this.setFlipX(body.velocity.x < 0);
+    this.syncFacing();
   }
 
   hit(): void {
@@ -66,5 +88,11 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
         onComplete: () => this.destroy()
       });
     }
+  }
+
+  private syncFacing(): void {
+    const body = this.body as Phaser.Physics.Arcade.Body;
+    const movingRight = body.velocity.x > 0;
+    this.setFlipX(ENEMY_DEFAULT_FACING === 'left' ? movingRight : !movingRight);
   }
 }

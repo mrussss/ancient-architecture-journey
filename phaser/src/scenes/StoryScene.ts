@@ -17,6 +17,9 @@ export class StoryScene extends Phaser.Scene {
   private pages: StoryPage[] = [];
   private pageIndex = 0;
   private dialogue?: DialogueBox;
+  private backgroundLayer?: Phaser.GameObjects.Image;
+  private shadeLayer?: Phaser.GameObjects.Rectangle;
+  private portrait?: Phaser.GameObjects.Image;
 
   constructor() {
     super('StoryScene');
@@ -31,11 +34,7 @@ export class StoryScene extends Phaser.Scene {
   }
 
   create(): void {
-    const level = getLevel(this.levelId);
-    this.add.image(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, level.backgroundKey).setDisplaySize(WINDOW_WIDTH, WINDOW_HEIGHT);
-    this.add.rectangle(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, WINDOW_WIDTH, WINDOW_HEIGHT, 0x000000, 0.28);
-    this.add.image(122, 352, 'player_idle').setDisplaySize(126, 168);
-
+    this.renderPageArt(this.pages[this.pageIndex]);
     this.dialogue = new DialogueBox(this);
     this.dialogue.setPage(this.pages[this.pageIndex]);
 
@@ -58,6 +57,42 @@ export class StoryScene extends Phaser.Scene {
       this.scene.start(this.nextScene, { levelId: this.levelId });
       return;
     }
-    this.dialogue?.setPage(this.pages[this.pageIndex]);
+    const page = this.pages[this.pageIndex];
+    this.renderPageArt(page);
+    this.dialogue?.setPage(page);
+  }
+
+  private renderPageArt(page: StoryPage): void {
+    this.backgroundLayer?.destroy();
+    this.shadeLayer?.destroy();
+    this.portrait?.destroy();
+
+    if (page.comicKey) {
+      if (this.textures.exists(page.comicKey)) {
+        this.backgroundLayer = this.add.image(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, page.comicKey);
+        this.coverImage(this.backgroundLayer);
+        this.backgroundLayer.setDepth(0);
+        this.backgroundLayer.setAlpha(0);
+        this.tweens.add({ targets: this.backgroundLayer, alpha: 1, duration: 180 });
+      } else {
+        console.warn(`Missing comic texture: ${page.comicKey}`);
+        const level = getLevel(this.levelId);
+        this.backgroundLayer = this.add.image(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, level.backgroundKey);
+        this.backgroundLayer.setDisplaySize(WINDOW_WIDTH, WINDOW_HEIGHT).setDepth(0);
+      }
+      this.shadeLayer = this.add.rectangle(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, WINDOW_WIDTH, WINDOW_HEIGHT, 0x000000, 0.1).setDepth(1);
+      return;
+    }
+
+    const level = getLevel(this.levelId);
+    this.backgroundLayer = this.add.image(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, level.backgroundKey).setDisplaySize(WINDOW_WIDTH, WINDOW_HEIGHT).setDepth(0);
+    this.shadeLayer = this.add.rectangle(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, WINDOW_WIDTH, WINDOW_HEIGHT, 0x000000, 0.28).setDepth(1);
+    this.portrait = this.add.image(122, 352, 'player_idle').setDisplaySize(126, 168).setDepth(2);
+  }
+
+  private coverImage(image: Phaser.GameObjects.Image): void {
+    const texture = image.texture.getSourceImage() as HTMLImageElement;
+    const scale = Math.max(WINDOW_WIDTH / texture.width, WINDOW_HEIGHT / texture.height);
+    image.setDisplaySize(texture.width * scale, texture.height * scale);
   }
 }

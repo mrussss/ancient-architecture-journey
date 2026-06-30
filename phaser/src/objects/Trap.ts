@@ -13,5 +13,16 @@ export class Trap extends Phaser.Physics.Arcade.Sprite {
     const body = this.body as Phaser.Physics.Arcade.StaticBody;
     body.setSize(data.w, data.h);
     body.updateFromGameObject();
+    this.addMotion(data.type);
+  }
+
+  private addMotion(type: TrapData['type']): void {
+    if (type === 'water') {
+      this.scene.tweens.add({ targets: this, y: this.y + 2, alpha: 0.72, duration: 620, yoyo: true, repeat: -1 });
+    } else if (type === 'fire') {
+      this.scene.tweens.add({ targets: this, scaleY: this.scaleY * 1.12, duration: 180, yoyo: true, repeat: -1 });
+    } else if (type === 'fallingStone') {
+      this.scene.tweens.add({ targets: this, angle: 4, y: this.y - 3, duration: 420, yoyo: true, repeat: -1 });
+    }
   }
 }

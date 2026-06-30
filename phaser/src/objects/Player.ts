@@ -64,9 +64,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       this.startAttack(time);
     }
 
-    if (!this.isAttacking) {
-      this.setTexture(body.blocked.down ? (Math.abs(body.velocity.x) > 4 ? 'player_walk' : 'player_idle') : 'player_jump');
-    }
+    this.updateAnimation(body);
     this.updateAttackHitbox();
   }
 
@@ -116,6 +114,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     }
     this.isAttacking = true;
     this.attackReadyAt = time + ATTACK_COOLDOWN;
+    this.anims.stop();
     this.setTexture('player_attack');
     this.setDisplaySize(88, 96);
     const body = this.attackHitbox.body as Phaser.Physics.Arcade.Body;
@@ -126,6 +125,23 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       this.setDisplaySize(72, 96);
       body.enable = false;
     });
+  }
+
+  private updateAnimation(body: Phaser.Physics.Arcade.Body): void {
+    if (this.isAttacking) {
+      return;
+    }
+    if (!body.blocked.down) {
+      this.anims.stop();
+      this.setTexture('player_jump');
+      return;
+    }
+    if (Math.abs(body.velocity.x) > 5) {
+      this.play('xiaoyan-walk', true);
+      return;
+    }
+    this.anims.stop();
+    this.setTexture('player_idle');
   }
 
   private updateAttackHitbox(): void {

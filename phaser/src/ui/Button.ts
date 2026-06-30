@@ -2,7 +2,9 @@ import Phaser from 'phaser';
 
 export class Button extends Phaser.GameObjects.Container {
   private background: Phaser.GameObjects.Rectangle;
+  private hitZone: Phaser.GameObjects.Zone;
   private label: Phaser.GameObjects.Text;
+  private visual: Phaser.GameObjects.Container;
   private selected = false;
   private onClick: () => void;
 
@@ -20,16 +22,14 @@ export class Button extends Phaser.GameObjects.Container {
         align: 'center'
       })
       .setOrigin(0.5);
+    this.hitZone = scene.add.zone(0, 0, width + 32, height + 32).setOrigin(0.5);
+    this.hitZone.setInteractive({ useHandCursor: true });
+    this.visual = scene.add.container(0, 0, [this.background, this.label]);
 
-    this.add([this.background, this.label]);
+    this.add([this.visual, this.hitZone]);
     scene.add.existing(this);
 
-    this.background
-      .setInteractive({
-        hitArea: new Phaser.Geom.Rectangle(-width / 2 - 8, -height / 2 - 8, width + 16, height + 16),
-        hitAreaCallback: Phaser.Geom.Rectangle.Contains,
-        useHandCursor: true
-      })
+    this.hitZone
       .on('pointerover', () => this.setSelected(true))
       .on('pointerout', () => this.setSelected(false))
       .on('pointerdown', () => this.press());
@@ -40,8 +40,8 @@ export class Button extends Phaser.GameObjects.Container {
     this.background.setFillStyle(value ? 0xb88743 : 0x3d5260, 0.95);
     this.background.setStrokeStyle(2, value ? 0xffe08a : 0xd7bd6a);
     this.label.setColor(value ? '#ffffff' : '#fff3d0');
-    this.scene.tweens.killTweensOf(this);
-    this.scene.tweens.add({ targets: this, scale: value ? 1.03 : 1, duration: 80 });
+    this.scene.tweens.killTweensOf(this.visual);
+    this.scene.tweens.add({ targets: this.visual, scale: value ? 1.03 : 1, duration: 80 });
     return this;
   }
 
@@ -51,7 +51,7 @@ export class Button extends Phaser.GameObjects.Container {
 
   press(): void {
     this.scene.tweens.add({
-      targets: this,
+      targets: this.visual,
       scale: 0.97,
       duration: 45,
       yoyo: true

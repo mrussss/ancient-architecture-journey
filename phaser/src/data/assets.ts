@@ -11,6 +11,10 @@ export const imageAssets: ImageAsset[] = [
 
   { key: 'player_idle', path: 'assets/images/player/xiaoyan_idle.png' },
   { key: 'player_walk', path: 'assets/images/player/xiaoyan_walk.png' },
+  { key: 'player_walk_1', path: 'assets/images/player/xiaoyan_walk_1.png' },
+  { key: 'player_walk_2', path: 'assets/images/player/xiaoyan_walk_2.png' },
+  { key: 'player_walk_3', path: 'assets/images/player/xiaoyan_walk_3.png' },
+  { key: 'player_walk_4', path: 'assets/images/player/xiaoyan_walk_4.png' },
   { key: 'player_jump', path: 'assets/images/player/xiaoyan_jump.png' },
   { key: 'player_attack', path: 'assets/images/player/xiaoyan_attack.png' },
 
@@ -38,7 +42,16 @@ export const imageAssets: ImageAsset[] = [
   { key: 'ui_portal', path: 'assets/images/ui/portal.png' },
   { key: 'ui_button', path: 'assets/images/ui/button.png' },
   { key: 'ui_button_selected', path: 'assets/images/ui/button_selected.png' },
-  { key: 'ui_panel', path: 'assets/images/ui/panel.png' }
+  { key: 'ui_panel', path: 'assets/images/ui/panel.png' },
+
+  { key: 'comic_opening_1', path: 'assets/images/comics/opening_1.png' },
+  { key: 'comic_opening_2', path: 'assets/images/comics/opening_2.png' },
+  { key: 'comic_level1_complete', path: 'assets/images/comics/level1_complete.png' },
+  { key: 'comic_level2_complete', path: 'assets/images/comics/level2_complete.png' },
+  { key: 'comic_level3_complete', path: 'assets/images/comics/level3_complete.png' },
+  { key: 'comic_level4_complete', path: 'assets/images/comics/level4_complete.png' },
+  { key: 'comic_final_1', path: 'assets/images/comics/final_1.png' },
+  { key: 'comic_final_2', path: 'assets/images/comics/final_2.png' }
 ];
 
 export const enemyTextureByType = {

@@ -87,9 +87,9 @@ function level1(): LevelData {
   addGroundRange(platforms, tileKey, 1622, 1058);
   platforms.push(
     platform(tileKey, 360, 420, 180, 24),
-    platform(tileKey, 820, 430, 320, 24),
+    platform(tileKey, 840, 388, 280, 24),
     platform(tileKey, 1210, 400, 260, 24),
-    platform(tileKey, 1665, 420, 360, 24),
+    platform(tileKey, 1685, 384, 320, 24),
     platform(tileKey, 2150, 395, 220, 24)
   );
   return {
@@ -108,10 +108,10 @@ function level1(): LevelData {
       trap('spike', 1312, 452, 76, 24)
     ],
     enemies: [
-      enemy('stoneBeast', 900, groundY - 42, 44, 42, 820, 1140),
-      enemy('stoneBeast', 1745, groundY - 42, 44, 42, 1665, 2025)
+      enemy('stoneBeast', 960, groundY - 42, 44, 42, 880, 1240),
+      enemy('stoneBeast', 1780, groundY - 42, 44, 42, 1700, 2020)
     ],
-    pages: [page(405, 380), page(705, 430), page(960, 390), page(1265, 360), page(2195, 355)],
+    pages: [page(405, 380), page(705, 430), page(960, 348), page(1265, 360), page(2195, 355)],
     goal: goal(2540, 380)
   };
 }
@@ -124,12 +124,12 @@ function level2(): LevelData {
   addGroundRange(platforms, tileKey, 1500, 590);
   addGroundRange(platforms, tileKey, 2190, 730);
   platforms.push(
-    platform(tileKey, 380, 405, 180, 24),
+    platform(tileKey, 390, 392, 170, 24),
     platform(tileKey, 610, 350, 190, 24),
     platform(tileKey, 850, 305, 250, 24),
     platform(tileKey, 1160, 315, 190, 24),
     platform(tileKey, 1410, 380, 140, 24),
-    platform(tileKey, 1600, 410, 230, 24),
+    platform(tileKey, 1600, 396, 230, 24),
     platform(tileKey, 1865, 372, 150, 24),
     platform(tileKey, 2070, 350, 210, 24),
     platform(tileKey, 2350, 410, 240, 24)
@@ -151,10 +151,10 @@ function level2(): LevelData {
       trap('spike', 2090, 492, 100, 42)
     ],
     enemies: [
-      enemy('woodenPuppet', 1010, groundY - 42, 42, 42, 880, 1300),
-      enemy('woodenPuppet', 940, 263, 42, 42, 875, 1085)
+      enemy('woodenPuppet', 1035, groundY - 42, 42, 42, 910, 1290),
+      enemy('woodenPuppet', 980, 263, 42, 42, 890, 1070)
     ],
-    pages: [page(420, 365), page(675, 310), page(1000, 265), page(1690, 370), page(2415, 370)],
+    pages: [page(430, 350), page(675, 310), page(1000, 265), page(1690, 356), page(2415, 370)],
     goal: goal(2760, 380)
   };
 }
@@ -169,12 +169,12 @@ function level3(): LevelData {
   platforms.push(
     platform(tileKey, 360, 428, 160, 24),
     platform(tileKey, 560, 392, 160, 24),
-    platform(tileKey, 920, 440, 220, 24),
+    platform(tileKey, 920, 392, 220, 24),
     platform(tileKey, 1180, 404, 220, 24),
     platform(tileKey, 1430, 360, 190, 24),
     platform(tileKey, 1740, 330, 220, 24),
     platform(tileKey, 2030, 390, 190, 24),
-    platform(tileKey, 2420, 430, 260, 24)
+    platform(tileKey, 2420, 392, 260, 24)
   );
   return {
     id: 3,
@@ -193,10 +193,10 @@ function level3(): LevelData {
       trap('fallingStone', 2168, 492, 96, 42)
     ],
     enemies: [
-      enemy('yamenGuard', 970, groundY - 42, 42, 42, 910, 1250),
-      enemy('yamenGuard', 2490, groundY - 42, 42, 42, 2320, 2700)
+      enemy('yamenGuard', 1030, groundY - 42, 42, 42, 930, 1270),
+      enemy('yamenGuard', 2500, groundY - 42, 42, 42, 2330, 2700)
     ],
-    pages: [page(405, 388), page(610, 352), page(1480, 320), page(1805, 290), page(2515, 390)],
+    pages: [page(405, 388), page(610, 352), page(1480, 320), page(1805, 290), page(2515, 352)],
     goal: goal(2905, 380)
   };
 }
@@ -211,12 +211,12 @@ function level4(): LevelData {
   addGroundRange(platforms, tileKey, 2620, 620);
   platforms.push(
     platform(tileKey, 350, 420, 180, 24),
-    platform(tileKey, 820, 420, 220, 24),
+    platform(tileKey, 840, 382, 210, 24),
     platform(tileKey, 1085, 370, 190, 24),
     platform(tileKey, 1420, 330, 190, 24),
     platform(tileKey, 1740, 375, 250, 24),
     platform(tileKey, 2140, 325, 210, 24),
-    platform(tileKey, 2520, 385, 250, 24),
+    platform(tileKey, 2520, 368, 250, 24),
     platform(tileKey, 2840, 350, 220, 24)
   );
   return {
@@ -237,8 +237,8 @@ function level4(): LevelData {
       trap('fire', 2700, 452, 92, 24)
     ],
     enemies: [
-      enemy('palaceLion', 900, groundY - 42, 46, 42, 820, 1160),
-      enemy('palaceLion', 2665, groundY - 42, 46, 42, 2620, 2860)
+      enemy('palaceLion', 930, groundY - 42, 46, 42, 850, 1180),
+      enemy('palaceLion', 2670, groundY - 42, 46, 42, 2635, 2865)
     ],
     pages: [page(395, 380), page(1130, 330), page(1480, 290), page(2185, 285), page(2885, 310)],
     goal: goal(3095, 380)
