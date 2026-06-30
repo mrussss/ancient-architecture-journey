@@ -11,9 +11,9 @@ export class FinalScene extends Phaser.Scene {
   create(): void {
     this.add.image(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, 'bg_taihe').setDisplaySize(WINDOW_WIDTH, WINDOW_HEIGHT).setAlpha(0.86);
     this.add.rectangle(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, 760, 380, 0x11181c, 0.78).setStrokeStyle(2, 0xd7bd6a);
-    this.add.text(WINDOW_WIDTH / 2, 126, '古建奇旅完成', {
+    this.add.text(WINDOW_WIDTH / 2, 126, '图卷重合，千年回响', {
       fontFamily: 'Arial, "Microsoft YaHei", sans-serif',
-      fontSize: '40px',
+      fontSize: '38px',
       color: '#ffe08a'
     }).setOrigin(0.5);
     const text = getStoryPages(4, 'final').map((page) => page.text).join('\n\n');
@@ -24,6 +24,6 @@ export class FinalScene extends Phaser.Scene {
       align: 'center',
       wordWrap: { width: 660 }
     }).setOrigin(0.5);
-    new Button(this, WINDOW_WIDTH / 2, 435, 260, 52, 'Main Menu', () => this.scene.start('MainMenuScene'));
+    new Button(this, WINDOW_WIDTH / 2, 435, 260, 52, '返回主菜单', () => this.scene.start('MainMenuScene'));
   }
 }

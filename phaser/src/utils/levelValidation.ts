@@ -17,6 +17,8 @@ export interface LevelValidationReport {
 }
 
 const groundY = 476;
+const playerVisualHeight = 96;
+const playerVisualTopOnGround = groundY - playerVisualHeight;
 
 export function validateLevel(level: LevelData): LevelValidationReport {
   const report = buildLevelValidationReport(level);
@@ -51,6 +53,14 @@ export function buildLevelValidationReport(level: LevelData): LevelValidationRep
       warnings.push({
         code: 'platform.low',
         message: `platform at x=${platform.x}, y=${platform.y} is too close to ground`,
+        x: platform.x,
+        y: platform.y
+      });
+    }
+    if ((platform.kind ?? 'ground') === 'oneWay' && platform.y + platform.h > playerVisualTopOnGround - 8) {
+      warnings.push({
+        code: 'oneWay.visualOverlap',
+        message: `oneWay platform at x=${platform.x} is too low and may visually overlap player walking on ground.`,
         x: platform.x,
         y: platform.y
       });

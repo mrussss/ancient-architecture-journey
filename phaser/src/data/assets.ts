@@ -10,6 +10,11 @@ export interface SpriteSheetAsset {
   frameHeight: number;
 }
 
+export interface AudioAsset {
+  key: string;
+  path: string;
+}
+
 export const imageAssets: ImageAsset[] = [
   { key: 'bg_bridge', path: 'assets/images/backgrounds/level1_bridge.png' },
   { key: 'bg_huizhou', path: 'assets/images/backgrounds/level2_huizhou.png' },
@@ -67,6 +72,10 @@ export const imageAssets: ImageAsset[] = [
 
 export const spriteSheetAssets: SpriteSheetAsset[] = [
   { key: 'xiaoyan_sheet', path: 'assets/images/player/xiaoyan_sheet.png', frameWidth: 72, frameHeight: 96 }
+];
+
+export const audioAssets: AudioAsset[] = [
+  { key: 'bgm_pavilion', path: 'assets/audio/pavilion_at_sunset.mp3' }
 ];
 
 export const enemyTextureByType = {

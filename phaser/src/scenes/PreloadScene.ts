@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { imageAssets, spriteSheetAssets } from '../data/assets';
+import { audioAssets, imageAssets, spriteSheetAssets } from '../data/assets';
 import { WINDOW_HEIGHT, WINDOW_WIDTH } from '../constants';
 
 export class PreloadScene extends Phaser.Scene {
@@ -10,8 +10,8 @@ export class PreloadScene extends Phaser.Scene {
   preload(): void {
     const barBg = this.add.rectangle(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, 520, 20, 0x30363d);
     const bar = this.add.rectangle(WINDOW_WIDTH / 2 - 260, WINDOW_HEIGHT / 2, 0, 20, 0xd7bd6a).setOrigin(0, 0.5);
-    this.add.text(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2 - 58, 'Loading Ancient Architecture Journey', {
-      fontFamily: 'Arial, sans-serif',
+    this.add.text(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2 - 58, '正在展开古建图卷', {
+      fontFamily: 'Arial, "Microsoft YaHei", sans-serif',
       fontSize: '24px',
       color: '#fff3d0'
     }).setOrigin(0.5);
@@ -32,6 +32,9 @@ export class PreloadScene extends Phaser.Scene {
         frameWidth: asset.frameWidth,
         frameHeight: asset.frameHeight
       });
+    }
+    for (const asset of audioAssets) {
+      this.load.audio(asset.key, asset.path);
     }
   }
 

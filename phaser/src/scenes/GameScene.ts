@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { AudioManager } from '../audio/AudioManager';
 import { WINDOW_HEIGHT, WINDOW_WIDTH } from '../constants';
 import { enemyTextureByType } from '../data/assets';
 import { getLevel, type LevelData } from '../data/levels';
@@ -9,6 +10,7 @@ import { TilePlatform } from '../objects/TilePlatform';
 import { Trap } from '../objects/Trap';
 import { DebugOverlay } from '../ui/DebugOverlay';
 import { Hud } from '../ui/Hud';
+import { Button } from '../ui/Button';
 import { ParallaxBackground } from '../ui/ParallaxBackground';
 import { Controls } from '../utils/controls';
 import { printLevelValidationReport, validateLevel, type LevelValidationReport } from '../utils/levelValidation';
@@ -32,8 +34,12 @@ export class GameScene extends Phaser.Scene {
   private debugOverlay!: DebugOverlay;
   private background!: ParallaxBackground;
   private validationReport!: LevelValidationReport;
+  private audio!: AudioManager;
+  private pauseObjects: Phaser.GameObjects.GameObject[] = [];
+  private pauseMusicText?: Phaser.GameObjects.Text;
   private pageCount = 0;
   private completed = false;
+  private pausedByMenu = false;
 
   constructor() {
     super('GameScene');
@@ -43,9 +49,12 @@ export class GameScene extends Phaser.Scene {
     this.level = getLevel(data.levelId ?? 1);
     this.pageCount = 0;
     this.completed = false;
+    this.pausedByMenu = false;
   }
 
   create(): void {
+    this.audio = AudioManager.get(this);
+    this.audio.playBgm();
     this.validationReport = validateLevel(this.level);
     this.physics.world.setBounds(0, 0, this.level.worldWidth, this.level.worldHeight + 220);
     this.createBackground();
@@ -93,7 +102,7 @@ export class GameScene extends Phaser.Scene {
       return;
     }
     if (controls.escapePressed) {
-      this.scene.start('LevelSelectScene');
+      this.togglePauseMenu();
       return;
     }
     if (controls.debugPressed) {
@@ -101,6 +110,12 @@ export class GameScene extends Phaser.Scene {
     }
     if (controls.reportPressed) {
       printLevelValidationReport(this.validationReport);
+    }
+
+    if (this.pausedByMenu) {
+      this.background.update(this.cameras.main);
+      this.debugOverlay.update();
+      return;
     }
 
     this.player.updateFromControls(controls, time);
@@ -225,4 +240,85 @@ export class GameScene extends Phaser.Scene {
     });
   }
 
+  private togglePauseMenu(): void {
+    if (this.pausedByMenu) {
+      this.closePauseMenu();
+      return;
+    }
+    this.openPauseMenu();
+  }
+
+  private openPauseMenu(): void {
+    this.pausedByMenu = true;
+    this.physics.pause();
+
+    const shade = this.add
+      .rectangle(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, WINDOW_WIDTH, WINDOW_HEIGHT, 0x000000, 0.42)
+      .setScrollFactor(0)
+      .setDepth(2000);
+    const panel = this.add
+      .rectangle(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, 500, 340, 0x11181c, 0.88)
+      .setStrokeStyle(2, 0xd7bd6a)
+      .setScrollFactor(0)
+      .setDepth(2000);
+    const title = this.add.text(WINDOW_WIDTH / 2, 158, '暂停', {
+      fontFamily: 'Arial, "Microsoft YaHei", sans-serif',
+      fontSize: '34px',
+      color: '#ffe08a'
+    }).setOrigin(0.5).setScrollFactor(0).setDepth(2000);
+    const volumeLabel = this.add.text(WINDOW_WIDTH / 2, 222, '音乐音量', {
+      fontFamily: 'Arial, "Microsoft YaHei", sans-serif',
+      fontSize: '17px',
+      color: '#dce6d6'
+    }).setOrigin(0.5).setScrollFactor(0).setDepth(2000);
+    this.pauseMusicText = this.add.text(WINDOW_WIDTH / 2, 250, '', {
+      fontFamily: 'Arial, "Microsoft YaHei", sans-serif',
+      fontSize: '19px',
+      color: '#fff3d0'
+    }).setOrigin(0.5).setScrollFactor(0).setDepth(2000);
+
+    this.pauseObjects.push(shade, panel, title, volumeLabel, this.pauseMusicText);
+
+    this.addPauseButton(WINDOW_WIDTH / 2, 312, 210, 46, '继续游戏', () => this.closePauseMenu());
+    this.addPauseButton(WINDOW_WIDTH / 2 - 118, 368, 52, 34, '-', () => this.changeMusicVolume(-0.1));
+    this.addPauseButton(WINDOW_WIDTH / 2 - 54, 368, 52, 34, '+', () => this.changeMusicVolume(0.1));
+    this.addPauseButton(WINDOW_WIDTH / 2 + 54, 368, 104, 34, '静音', () => this.toggleMusicMute());
+    this.addPauseButton(WINDOW_WIDTH / 2, 432, 210, 46, '返回选关', () => {
+      this.physics.resume();
+      this.scene.start('LevelSelectScene');
+    });
+    this.updatePauseMusicText();
+  }
+
+  private closePauseMenu(): void {
+    this.pausedByMenu = false;
+    this.physics.resume();
+    for (const object of this.pauseObjects) {
+      object.destroy();
+    }
+    this.pauseObjects = [];
+    this.pauseMusicText = undefined;
+  }
+
+  private addPauseButton(x: number, y: number, width: number, height: number, text: string, onClick: () => void): void {
+    const button = new Button(this, x, y, width, height, text, onClick);
+    button.setScrollFactor(0).setDepth(2010);
+    this.pauseObjects.push(button);
+  }
+
+  private changeMusicVolume(delta: number): void {
+    this.audio.playBgm();
+    this.audio.setVolume(this.audio.getVolume() + delta);
+    this.updatePauseMusicText();
+  }
+
+  private toggleMusicMute(): void {
+    this.audio.playBgm();
+    this.audio.toggleMute();
+    this.updatePauseMusicText();
+  }
+
+  private updatePauseMusicText(): void {
+    this.pauseMusicText?.setText(this.audio.isMuted() ? '音乐：静音' : `音乐：${Math.round(this.audio.getVolume() * 100)}%`);
+  }
 }

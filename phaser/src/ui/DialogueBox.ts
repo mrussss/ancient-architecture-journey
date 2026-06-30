@@ -23,8 +23,8 @@ export class DialogueBox {
       color: '#fff8e8',
       wordWrap: { width: 780 }
     }).setDepth(31);
-    scene.add.text(710, 492, 'Space / Enter / Click', {
-      fontFamily: 'Arial, sans-serif',
+    scene.add.text(720, 492, '空格 / 回车 / 点击', {
+      fontFamily: 'Arial, "Microsoft YaHei", sans-serif',
       fontSize: '14px',
       color: '#cdd8c9'
     }).setDepth(31);

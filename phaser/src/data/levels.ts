@@ -94,13 +94,13 @@ function level1(): LevelData {
     platform(tileKey, 360, 420, 180, 24, 'solidBlock'),
     platform(tileKey, 840, 388, 280, 24, 'solidBlock'),
     platform(tileKey, 1210, 400, 260, 24, 'solidBlock'),
-    platform(tileKey, 1685, 384, 320, 24),
+    platform(tileKey, 1685, 384, 320, 24, 'solidBlock'),
     platform(tileKey, 2150, 395, 220, 24, 'solidBlock')
   );
   return {
     id: 1,
-    title: 'Level 1: Ancient Bridge',
-    subtitle: '桥梁之智：水上千年通途',
+    title: '第一章 古桥：水上千年通途',
+    subtitle: '石拱临水，桥影连岸',
     backgroundKey: 'bg_bridge',
     wideBackgroundKey: 'bg_bridge_wide',
     tileKey,
@@ -131,19 +131,19 @@ function level2(): LevelData {
   addGroundRange(platforms, tileKey, 2190, 730);
   platforms.push(
     platform(tileKey, 390, 392, 170, 24, 'solidBlock'),
-    platform(tileKey, 610, 350, 190, 24),
+    platform(tileKey, 610, 342, 190, 24),
     platform(tileKey, 850, 305, 250, 24, 'solidBlock'),
     platform(tileKey, 1160, 315, 190, 24),
-    platform(tileKey, 1410, 380, 140, 24),
+    platform(tileKey, 1410, 380, 140, 24, 'solidBlock'),
     platform(tileKey, 1600, 396, 230, 24, 'solidBlock'),
-    platform(tileKey, 1865, 372, 150, 24),
-    platform(tileKey, 2070, 350, 210, 24),
+    platform(tileKey, 1865, 372, 150, 24, 'solidBlock'),
+    platform(tileKey, 2070, 342, 210, 24),
     platform(tileKey, 2350, 410, 240, 24, 'solidBlock')
   );
   return {
     id: 2,
-    title: 'Level 2: Huizhou Residence',
-    subtitle: '民居之美：白墙黑瓦马头墙',
+    title: '第二章 徽居：白墙黑瓦之间',
+    subtitle: '院落递进，屋檐成路',
     backgroundKey: 'bg_huizhou',
     wideBackgroundKey: 'bg_huizhou_wide',
     tileKey,
@@ -161,7 +161,7 @@ function level2(): LevelData {
       enemy('woodenPuppet', 1035, groundY - 42, 42, 42, 910, 1290),
       enemy('woodenPuppet', 980, 263, 42, 42, 890, 1070)
     ],
-    pages: [page(430, 350), page(675, 310), page(1000, 265), page(1690, 356), page(2415, 370)],
+    pages: [page(430, 350), page(675, 302), page(1000, 265), page(1690, 356), page(2415, 370)],
     goal: goal(2760, 380)
   };
 }
@@ -178,15 +178,15 @@ function level3(): LevelData {
     platform(tileKey, 560, 392, 160, 24, 'solidBlock'),
     platform(tileKey, 920, 392, 220, 24, 'solidBlock'),
     platform(tileKey, 1180, 404, 220, 24, 'solidBlock'),
-    platform(tileKey, 1430, 360, 190, 24),
+    platform(tileKey, 1430, 344, 190, 24),
     platform(tileKey, 1740, 330, 220, 24),
     platform(tileKey, 2030, 390, 190, 24, 'solidBlock'),
     platform(tileKey, 2420, 392, 260, 24, 'solidBlock')
   );
   return {
     id: 3,
-    title: 'Level 3: County Yamen',
-    subtitle: '官府之制：礼法秩序与空间',
+    title: '第三章 县署：礼法秩序之门',
+    subtitle: '台阶分序，鼓声入院',
     backgroundKey: 'bg_yamen',
     wideBackgroundKey: 'bg_yamen_wide',
     tileKey,
@@ -204,7 +204,7 @@ function level3(): LevelData {
       enemy('yamenGuard', 1030, groundY - 42, 42, 42, 930, 1270),
       enemy('yamenGuard', 2500, groundY - 42, 42, 42, 2330, 2700)
     ],
-    pages: [page(405, 388), page(610, 352), page(1480, 320), page(1805, 290), page(2515, 352)],
+    pages: [page(405, 388), page(610, 352), page(1480, 304), page(1805, 290), page(2515, 352)],
     goal: goal(2905, 380)
   };
 }
@@ -220,17 +220,17 @@ function level4(): LevelData {
   platforms.push(
     platform(tileKey, 350, 420, 180, 24, 'solidBlock'),
     platform(tileKey, 840, 382, 210, 24, 'solidBlock'),
-    platform(tileKey, 1085, 370, 190, 24),
+    platform(tileKey, 1085, 344, 190, 24),
     platform(tileKey, 1420, 330, 190, 24),
     platform(tileKey, 1740, 375, 250, 24, 'solidBlock'),
     platform(tileKey, 2140, 325, 210, 24),
     platform(tileKey, 2520, 368, 250, 24, 'solidBlock'),
-    platform(tileKey, 2840, 350, 220, 24)
+    platform(tileKey, 2840, 342, 220, 24)
   );
   return {
     id: 4,
-    title: 'Level 4: Hall of Supreme Harmony',
-    subtitle: '皇宫之尊：中轴礼制与殿宇秩序',
+    title: '第四章 太和：中轴之巅',
+    subtitle: '重台高起，金瓦映天',
     backgroundKey: 'bg_taihe',
     wideBackgroundKey: 'bg_taihe_wide',
     tileKey,
