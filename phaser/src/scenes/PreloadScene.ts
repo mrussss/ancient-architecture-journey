@@ -39,7 +39,7 @@ export class PreloadScene extends Phaser.Scene {
     if (!this.anims.exists('xiaoyan-walk')) {
       this.anims.create({
         key: 'xiaoyan-walk',
-        frames: this.anims.generateFrameNumbers('player_walk_sheet', { start: 0, end: 3 }),
+        frames: this.anims.generateFrameNumbers('xiaoyan_sheet', { start: 1, end: 4 }),
         frameRate: 8,
         repeat: -1
       });

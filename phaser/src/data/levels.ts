@@ -1,6 +1,6 @@
 export type TrapType = 'water' | 'spike' | 'fire' | 'fallingStone';
 export type EnemyType = 'stoneBeast' | 'woodenPuppet' | 'yamenGuard' | 'palaceLion';
-export type PlatformKind = 'solid' | 'oneWay';
+export type PlatformKind = 'ground' | 'solidBlock' | 'oneWay';
 
 export interface RectData {
   x: number;
@@ -55,18 +55,18 @@ function addGroundRange(platforms: RectData[], tileKey: string, x: number, w: nu
       w: Math.min(groundSegment, x + w - tileX),
       h: groundHeight,
       textureKey: tileKey,
-      kind: 'solid'
+      kind: 'ground'
     });
   }
 }
 
-const platform = (tileKey: string, x: number, y: number, w: number, h: number): RectData => ({
+const platform = (tileKey: string, x: number, y: number, w: number, h: number, kind: PlatformKind = 'oneWay'): RectData => ({
   x,
   y,
   w,
   h,
   textureKey: tileKey,
-  kind: 'oneWay'
+  kind
 });
 
 const trap = (type: TrapType, x: number, y: number, w: number, h: number): TrapData => ({ type, x, y, w, h });
@@ -91,17 +91,18 @@ function level1(): LevelData {
   addGroundRange(platforms, tileKey, 776, 734);
   addGroundRange(platforms, tileKey, 1622, 1058);
   platforms.push(
-    platform(tileKey, 360, 420, 180, 24),
-    platform(tileKey, 840, 388, 280, 24),
-    platform(tileKey, 1210, 400, 260, 24),
+    platform(tileKey, 360, 420, 180, 24, 'solidBlock'),
+    platform(tileKey, 840, 388, 280, 24, 'solidBlock'),
+    platform(tileKey, 1210, 400, 260, 24, 'solidBlock'),
     platform(tileKey, 1685, 384, 320, 24),
-    platform(tileKey, 2150, 395, 220, 24)
+    platform(tileKey, 2150, 395, 220, 24, 'solidBlock')
   );
   return {
     id: 1,
     title: 'Level 1: Ancient Bridge',
     subtitle: '桥梁之智：水上千年通途',
     backgroundKey: 'bg_bridge',
+    wideBackgroundKey: 'bg_bridge_wide',
     tileKey,
     worldWidth: 2680,
     worldHeight: 540,
@@ -129,21 +130,22 @@ function level2(): LevelData {
   addGroundRange(platforms, tileKey, 1500, 590);
   addGroundRange(platforms, tileKey, 2190, 730);
   platforms.push(
-    platform(tileKey, 390, 392, 170, 24),
+    platform(tileKey, 390, 392, 170, 24, 'solidBlock'),
     platform(tileKey, 610, 350, 190, 24),
-    platform(tileKey, 850, 305, 250, 24),
+    platform(tileKey, 850, 305, 250, 24, 'solidBlock'),
     platform(tileKey, 1160, 315, 190, 24),
     platform(tileKey, 1410, 380, 140, 24),
-    platform(tileKey, 1600, 396, 230, 24),
+    platform(tileKey, 1600, 396, 230, 24, 'solidBlock'),
     platform(tileKey, 1865, 372, 150, 24),
     platform(tileKey, 2070, 350, 210, 24),
-    platform(tileKey, 2350, 410, 240, 24)
+    platform(tileKey, 2350, 410, 240, 24, 'solidBlock')
   );
   return {
     id: 2,
     title: 'Level 2: Huizhou Residence',
     subtitle: '民居之美：白墙黑瓦马头墙',
     backgroundKey: 'bg_huizhou',
+    wideBackgroundKey: 'bg_huizhou_wide',
     tileKey,
     worldWidth: 2920,
     worldHeight: 540,
@@ -172,20 +174,21 @@ function level3(): LevelData {
   addGroundRange(platforms, tileKey, 1660, 500);
   addGroundRange(platforms, tileKey, 2280, 780);
   platforms.push(
-    platform(tileKey, 360, 428, 160, 24),
-    platform(tileKey, 560, 392, 160, 24),
-    platform(tileKey, 920, 392, 220, 24),
-    platform(tileKey, 1180, 404, 220, 24),
+    platform(tileKey, 360, 428, 160, 24, 'solidBlock'),
+    platform(tileKey, 560, 392, 160, 24, 'solidBlock'),
+    platform(tileKey, 920, 392, 220, 24, 'solidBlock'),
+    platform(tileKey, 1180, 404, 220, 24, 'solidBlock'),
     platform(tileKey, 1430, 360, 190, 24),
     platform(tileKey, 1740, 330, 220, 24),
-    platform(tileKey, 2030, 390, 190, 24),
-    platform(tileKey, 2420, 392, 260, 24)
+    platform(tileKey, 2030, 390, 190, 24, 'solidBlock'),
+    platform(tileKey, 2420, 392, 260, 24, 'solidBlock')
   );
   return {
     id: 3,
     title: 'Level 3: County Yamen',
     subtitle: '官府之制：礼法秩序与空间',
     backgroundKey: 'bg_yamen',
+    wideBackgroundKey: 'bg_yamen_wide',
     tileKey,
     worldWidth: 3060,
     worldHeight: 540,
@@ -215,13 +218,13 @@ function level4(): LevelData {
   addGroundRange(platforms, tileKey, 2060, 430);
   addGroundRange(platforms, tileKey, 2620, 620);
   platforms.push(
-    platform(tileKey, 350, 420, 180, 24),
-    platform(tileKey, 840, 382, 210, 24),
+    platform(tileKey, 350, 420, 180, 24, 'solidBlock'),
+    platform(tileKey, 840, 382, 210, 24, 'solidBlock'),
     platform(tileKey, 1085, 370, 190, 24),
     platform(tileKey, 1420, 330, 190, 24),
-    platform(tileKey, 1740, 375, 250, 24),
+    platform(tileKey, 1740, 375, 250, 24, 'solidBlock'),
     platform(tileKey, 2140, 325, 210, 24),
-    platform(tileKey, 2520, 368, 250, 24),
+    platform(tileKey, 2520, 368, 250, 24, 'solidBlock'),
     platform(tileKey, 2840, 350, 220, 24)
   );
   return {
@@ -229,6 +232,7 @@ function level4(): LevelData {
     title: 'Level 4: Hall of Supreme Harmony',
     subtitle: '皇宫之尊：中轴礼制与殿宇秩序',
     backgroundKey: 'bg_taihe',
+    wideBackgroundKey: 'bg_taihe_wide',
     tileKey,
     worldWidth: 3240,
     worldHeight: 540,

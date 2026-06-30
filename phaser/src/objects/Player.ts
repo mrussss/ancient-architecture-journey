@@ -27,7 +27,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   private readonly jumpBufferMs = 120;
 
   constructor(scene: Phaser.Scene, x: number, y: number) {
-    super(scene, x, y, 'player_idle');
+    super(scene, x, y, 'xiaoyan_sheet', 0);
     this.spawnX = x;
     this.spawnY = y;
     scene.add.existing(this);
@@ -129,7 +129,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.isAttacking = true;
     this.attackReadyAt = time + ATTACK_COOLDOWN;
     this.anims.stop();
-    this.setTexture('player_attack');
+    this.setTexture('xiaoyan_sheet', 6);
     this.applyVisualSize();
     const body = this.attackHitbox.body as Phaser.Physics.Arcade.Body;
     body.enable = true;
@@ -147,7 +147,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     }
     if (!body.blocked.down) {
       this.anims.stop();
-      this.setTexture('player_jump');
+      this.setTexture('xiaoyan_sheet', 5);
       this.applyVisualSize();
       return;
     }
@@ -157,7 +157,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       return;
     }
     this.anims.stop();
-    this.setTexture('player_idle');
+    this.setTexture('xiaoyan_sheet', 0);
     this.applyVisualSize();
   }
 

@@ -9,7 +9,7 @@ export class ParallaxBackground {
   constructor(private scene: Phaser.Scene, textureKey: string, private worldWidth: number) {
     this.image = scene.add.image(0, 0, textureKey).setOrigin(0, 0).setScrollFactor(0).setDepth(-20);
     const source = this.image.texture.getSourceImage() as HTMLImageElement;
-    const scale = Math.max(WINDOW_WIDTH / source.width, WINDOW_HEIGHT / source.height);
+    const scale = WINDOW_HEIGHT / source.height;
     this.displayWidth = source.width * scale;
     this.image.setDisplaySize(this.displayWidth, source.height * scale);
     this.shade = scene.add
@@ -24,6 +24,9 @@ export class ParallaxBackground {
     const scrollRange = Math.max(1, this.worldWidth - WINDOW_WIDTH);
     const scrollRatio = Phaser.Math.Clamp(camera.scrollX / scrollRange, 0, 1);
     this.image.x = -maxOffset * scrollRatio;
+    if (this.displayWidth < WINDOW_WIDTH) {
+      this.image.x = (WINDOW_WIDTH - this.displayWidth) / 2;
+    }
     this.shade.setPosition(0, 0);
   }
 }

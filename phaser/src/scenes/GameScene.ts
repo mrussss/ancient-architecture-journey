@@ -21,7 +21,8 @@ export class GameScene extends Phaser.Scene {
   private level!: LevelData;
   private controls!: Controls;
   private player!: Player;
-  private solidPlatforms!: Phaser.Physics.Arcade.StaticGroup;
+  private groundPlatforms!: Phaser.Physics.Arcade.StaticGroup;
+  private solidBlockPlatforms!: Phaser.Physics.Arcade.StaticGroup;
   private oneWayPlatforms!: Phaser.Physics.Arcade.StaticGroup;
   private enemies!: Phaser.Physics.Arcade.Group;
   private traps!: Phaser.Physics.Arcade.StaticGroup;
@@ -63,10 +64,11 @@ export class GameScene extends Phaser.Scene {
     this.goal.refreshBody();
     this.tweens.add({ targets: this.goal, alpha: 0.55, scale: 1.08, duration: 760, yoyo: true, repeat: -1 });
 
-    this.physics.add.collider(this.player, this.solidPlatforms);
+    this.physics.add.collider(this.player, this.groundPlatforms);
+    this.physics.add.collider(this.player, this.solidBlockPlatforms);
     this.physics.add.collider(this.player, this.oneWayPlatforms, undefined, this.shouldCollideOneWay, this);
-    this.physics.add.collider(this.enemies, this.solidPlatforms);
-    this.physics.add.collider(this.enemies, this.oneWayPlatforms);
+    this.physics.add.collider(this.enemies, this.groundPlatforms);
+    this.physics.add.collider(this.enemies, this.solidBlockPlatforms);
     this.physics.add.overlap(this.player, this.traps, () => this.handleTrapHit());
     this.physics.add.overlap(this.player, this.enemies, (_player, enemy) => this.handleEnemyHit(enemy as Enemy));
     this.physics.add.overlap(this.player.attackHitbox, this.enemies, (_hitbox, enemy) => this.handleAttackEnemy(enemy as Enemy));
@@ -122,15 +124,26 @@ export class GameScene extends Phaser.Scene {
   }
 
   private createBackground(): void {
-    this.background = new ParallaxBackground(this, this.level.wideBackgroundKey ?? this.level.backgroundKey, this.level.worldWidth);
+    const backgroundKey =
+      this.level.wideBackgroundKey && this.textures.exists(this.level.wideBackgroundKey)
+        ? this.level.wideBackgroundKey
+        : this.level.backgroundKey;
+    this.background = new ParallaxBackground(this, backgroundKey, this.level.worldWidth);
     this.add.rectangle(0, 488, this.level.worldWidth, 52, 0x101215, 0.18).setOrigin(0, 0);
   }
 
   private createPlatforms(): void {
-    this.solidPlatforms = this.physics.add.staticGroup();
+    this.groundPlatforms = this.physics.add.staticGroup();
+    this.solidBlockPlatforms = this.physics.add.staticGroup();
     this.oneWayPlatforms = this.physics.add.staticGroup();
     for (const rect of this.level.platforms) {
-      const group = (rect.kind ?? 'solid') === 'oneWay' ? this.oneWayPlatforms : this.solidPlatforms;
+      const kind = rect.kind ?? 'ground';
+      const group =
+        kind === 'oneWay'
+          ? this.oneWayPlatforms
+          : kind === 'solidBlock'
+            ? this.solidBlockPlatforms
+            : this.groundPlatforms;
       new TilePlatform(this, group, rect, this.level.tileKey);
     }
   }
@@ -141,7 +154,7 @@ export class GameScene extends Phaser.Scene {
   ): boolean {
     const playerBody = playerObject.body as Phaser.Physics.Arcade.Body;
     const platformBody = platformObject.body as Phaser.Physics.Arcade.StaticBody;
-    return playerBody.velocity.y >= 0 && playerBody.bottom <= platformBody.top + 12;
+    return playerBody.velocity.y >= 0 && playerBody.bottom <= platformBody.top + 10;
   }
 
   private createTraps(): void {

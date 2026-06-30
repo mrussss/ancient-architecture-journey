@@ -8,6 +8,15 @@ const frameWidth = 72;
 const frameHeight = 96;
 const targetHeight = 88;
 const maxTargetWidth = 66;
+const sheetFrames = [
+  'xiaoyan_idle.png',
+  'xiaoyan_walk_1.png',
+  'xiaoyan_walk_2.png',
+  'xiaoyan_walk_3.png',
+  'xiaoyan_walk_4.png',
+  'xiaoyan_jump.png',
+  'xiaoyan_attack.png'
+];
 
 function readPng(fileName) {
   return PNG.sync.read(fs.readFileSync(path.join(playerDir, fileName)));
@@ -55,9 +64,10 @@ function drawScaled(source, bounds, target, frameIndex) {
       const srcY = Math.min(bounds.maxY, bounds.minY + Math.floor(y / scale));
       const srcIndex = (source.width * srcY + srcX) << 2;
       const dstIndex = (target.width * (offsetY + y) + offsetX + x) << 2;
-      target.data[dstIndex] = source.data[srcIndex];
-      target.data[dstIndex + 1] = source.data[srcIndex + 1];
-      target.data[dstIndex + 2] = source.data[srcIndex + 2];
+      const color = normalizeCostumeColor(source.data[srcIndex], source.data[srcIndex + 1], source.data[srcIndex + 2]);
+      target.data[dstIndex] = color.r;
+      target.data[dstIndex + 1] = color.g;
+      target.data[dstIndex + 2] = color.b;
       target.data[dstIndex + 3] = source.data[srcIndex + 3];
     }
   }
@@ -77,4 +87,27 @@ for (let frame = 1; frame <= 4; frame += 1) {
 }
 
 writePng('xiaoyan_walk_sheet.png', sheet);
-console.info('Normalized Xiaoyan walk frames to 72x96 and wrote xiaoyan_walk_sheet.png');
+
+const fullSheet = new PNG({ width: frameWidth * sheetFrames.length, height: frameHeight, colorType: 6 });
+fullSheet.data.fill(0);
+sheetFrames.forEach((fileName, index) => {
+  const source = readPng(fileName);
+  drawScaled(source, findBounds(source), fullSheet, index);
+});
+writePng('xiaoyan_sheet.png', fullSheet);
+
+console.info('Normalized Xiaoyan frames to 72x96 and wrote xiaoyan_walk_sheet.png + xiaoyan_sheet.png');
+
+function normalizeCostumeColor(r, g, b) {
+  const isWarmJacket = r > 110 && g < 120 && b < 110 && r > g * 1.25;
+  if (!isWarmJacket) {
+    return { r, g, b };
+  }
+
+  const brightness = Math.max(0.45, Math.min(1.22, (r + g + b) / 260));
+  return {
+    r: Math.round(32 * brightness),
+    g: Math.round(126 * brightness),
+    b: Math.round(102 * brightness)
+  };
+}

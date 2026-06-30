@@ -15,6 +15,10 @@ export const imageAssets: ImageAsset[] = [
   { key: 'bg_huizhou', path: 'assets/images/backgrounds/level2_huizhou.png' },
   { key: 'bg_yamen', path: 'assets/images/backgrounds/level3_yamen.png' },
   { key: 'bg_taihe', path: 'assets/images/backgrounds/level4_taihe.png' },
+  { key: 'bg_bridge_wide', path: 'assets/images/backgrounds/level1_bridge_wide.png' },
+  { key: 'bg_huizhou_wide', path: 'assets/images/backgrounds/level2_huizhou_wide.png' },
+  { key: 'bg_yamen_wide', path: 'assets/images/backgrounds/level3_yamen_wide.png' },
+  { key: 'bg_taihe_wide', path: 'assets/images/backgrounds/level4_taihe_wide.png' },
 
   { key: 'player_idle', path: 'assets/images/player/xiaoyan_idle.png' },
   { key: 'player_walk', path: 'assets/images/player/xiaoyan_walk.png' },
@@ -62,7 +66,7 @@ export const imageAssets: ImageAsset[] = [
 ];
 
 export const spriteSheetAssets: SpriteSheetAsset[] = [
-  { key: 'player_walk_sheet', path: 'assets/images/player/xiaoyan_walk_sheet.png', frameWidth: 72, frameHeight: 96 }
+  { key: 'xiaoyan_sheet', path: 'assets/images/player/xiaoyan_sheet.png', frameWidth: 72, frameHeight: 96 }
 ];
 
 export const enemyTextureByType = {

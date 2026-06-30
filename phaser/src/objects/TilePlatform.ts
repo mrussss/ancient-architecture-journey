@@ -13,7 +13,7 @@ export class TilePlatform {
     const material = materialForTile(tileKey);
     const centerX = rect.x + rect.w / 2;
     const centerY = rect.y + rect.h / 2;
-    this.kind = rect.kind ?? 'solid';
+    this.kind = rect.kind ?? 'ground';
 
     this.visual = scene.add.tileSprite(centerX, centerY, rect.w, rect.h, material.textureKey);
     this.visual.setOrigin(0.5);

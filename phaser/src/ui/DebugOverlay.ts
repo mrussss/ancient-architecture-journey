@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import type { LevelData } from '../data/levels';
+import type { LevelData, PlatformKind } from '../data/levels';
 import type { LevelValidationReport } from '../utils/levelValidation';
 
 export class DebugOverlay {
@@ -53,8 +53,8 @@ export class DebugOverlay {
       return;
     }
 
-    this.graphics.lineStyle(2, 0x35e66b, 0.88);
     for (const platform of this.level.platforms) {
+      this.graphics.lineStyle(2, this.platformColor(platform.kind ?? 'ground'), 0.9);
       this.graphics.strokeRect(platform.x, platform.y, platform.w, platform.h);
     }
 
@@ -91,9 +91,20 @@ export class DebugOverlay {
     this.text.setText([
       `F2 Debug Overlay | F3 Validation Report`,
       `${this.report.levelTitle}`,
+      `ground=green solidBlock=yellow oneWay=blue`,
       `platforms=${this.report.platformCount} traps=${this.report.trapCount} enemies=${this.report.enemyCount} pages=${this.report.pageCount}`,
       `warnings=${this.report.warnings.length}`,
       ...this.report.warnings.slice(0, 5).map((warning) => `${warning.code}: ${warning.message}`)
     ]);
+  }
+
+  private platformColor(kind: PlatformKind): number {
+    if (kind === 'solidBlock') {
+      return 0xffd84a;
+    }
+    if (kind === 'oneWay') {
+      return 0x4aa3ff;
+    }
+    return 0x35e66b;
   }
 }
