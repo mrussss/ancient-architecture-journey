@@ -9,6 +9,7 @@ import { TilePlatform } from '../objects/TilePlatform';
 import { Trap } from '../objects/Trap';
 import { DebugOverlay } from '../ui/DebugOverlay';
 import { Hud } from '../ui/Hud';
+import { ParallaxBackground } from '../ui/ParallaxBackground';
 import { Controls } from '../utils/controls';
 import { printLevelValidationReport, validateLevel, type LevelValidationReport } from '../utils/levelValidation';
 
@@ -20,13 +21,15 @@ export class GameScene extends Phaser.Scene {
   private level!: LevelData;
   private controls!: Controls;
   private player!: Player;
-  private platforms!: Phaser.Physics.Arcade.StaticGroup;
+  private solidPlatforms!: Phaser.Physics.Arcade.StaticGroup;
+  private oneWayPlatforms!: Phaser.Physics.Arcade.StaticGroup;
   private enemies!: Phaser.Physics.Arcade.Group;
   private traps!: Phaser.Physics.Arcade.StaticGroup;
   private pages!: Phaser.Physics.Arcade.Group;
   private goal!: Phaser.Physics.Arcade.StaticImage;
   private hud!: Hud;
   private debugOverlay!: DebugOverlay;
+  private background!: ParallaxBackground;
   private validationReport!: LevelValidationReport;
   private pageCount = 0;
   private completed = false;
@@ -60,8 +63,10 @@ export class GameScene extends Phaser.Scene {
     this.goal.refreshBody();
     this.tweens.add({ targets: this.goal, alpha: 0.55, scale: 1.08, duration: 760, yoyo: true, repeat: -1 });
 
-    this.physics.add.collider(this.player, this.platforms);
-    this.physics.add.collider(this.enemies, this.platforms);
+    this.physics.add.collider(this.player, this.solidPlatforms);
+    this.physics.add.collider(this.player, this.oneWayPlatforms, undefined, this.shouldCollideOneWay, this);
+    this.physics.add.collider(this.enemies, this.solidPlatforms);
+    this.physics.add.collider(this.enemies, this.oneWayPlatforms);
     this.physics.add.overlap(this.player, this.traps, () => this.handleTrapHit());
     this.physics.add.overlap(this.player, this.enemies, (_player, enemy) => this.handleEnemyHit(enemy as Enemy));
     this.physics.add.overlap(this.player.attackHitbox, this.enemies, (_hitbox, enemy) => this.handleAttackEnemy(enemy as Enemy));
@@ -101,6 +106,7 @@ export class GameScene extends Phaser.Scene {
       (child as Enemy).updatePatrol(delta);
       return true;
     });
+    this.background.update(this.cameras.main);
     this.debugOverlay.update();
     this.hud.update(this.player.hp, this.pageCount, this.level.pages.length);
 
@@ -116,19 +122,26 @@ export class GameScene extends Phaser.Scene {
   }
 
   private createBackground(): void {
-    this.add.image(0, 0, this.level.backgroundKey)
-      .setOrigin(0, 0)
-      .setScrollFactor(0.35, 0)
-      .setDisplaySize(this.level.worldWidth, WINDOW_HEIGHT);
-    this.add.rectangle(0, 0, this.level.worldWidth, WINDOW_HEIGHT, 0x10202c, 0.08).setOrigin(0, 0).setScrollFactor(0.35, 0);
+    this.background = new ParallaxBackground(this, this.level.wideBackgroundKey ?? this.level.backgroundKey, this.level.worldWidth);
     this.add.rectangle(0, 488, this.level.worldWidth, 52, 0x101215, 0.18).setOrigin(0, 0);
   }
 
   private createPlatforms(): void {
-    this.platforms = this.physics.add.staticGroup();
+    this.solidPlatforms = this.physics.add.staticGroup();
+    this.oneWayPlatforms = this.physics.add.staticGroup();
     for (const rect of this.level.platforms) {
-      new TilePlatform(this, this.platforms, rect, this.level.tileKey);
+      const group = (rect.kind ?? 'solid') === 'oneWay' ? this.oneWayPlatforms : this.solidPlatforms;
+      new TilePlatform(this, group, rect, this.level.tileKey);
     }
+  }
+
+  private shouldCollideOneWay(
+    playerObject: Phaser.Types.Physics.Arcade.GameObjectWithBody,
+    platformObject: Phaser.Types.Physics.Arcade.GameObjectWithBody
+  ): boolean {
+    const playerBody = playerObject.body as Phaser.Physics.Arcade.Body;
+    const platformBody = platformObject.body as Phaser.Physics.Arcade.StaticBody;
+    return playerBody.velocity.y >= 0 && playerBody.bottom <= platformBody.top + 12;
   }
 
   private createTraps(): void {

@@ -1,5 +1,6 @@
 export type TrapType = 'water' | 'spike' | 'fire' | 'fallingStone';
 export type EnemyType = 'stoneBeast' | 'woodenPuppet' | 'yamenGuard' | 'palaceLion';
+export type PlatformKind = 'solid' | 'oneWay';
 
 export interface RectData {
   x: number;
@@ -7,6 +8,7 @@ export interface RectData {
   w: number;
   h: number;
   textureKey?: string;
+  kind?: PlatformKind;
 }
 
 export interface TrapData extends RectData {
@@ -29,6 +31,7 @@ export interface LevelData {
   title: string;
   subtitle: string;
   backgroundKey: string;
+  wideBackgroundKey?: string;
   tileKey: string;
   worldWidth: number;
   worldHeight: number;
@@ -51,7 +54,8 @@ function addGroundRange(platforms: RectData[], tileKey: string, x: number, w: nu
       y: groundY,
       w: Math.min(groundSegment, x + w - tileX),
       h: groundHeight,
-      textureKey: tileKey
+      textureKey: tileKey,
+      kind: 'solid'
     });
   }
 }
@@ -61,7 +65,8 @@ const platform = (tileKey: string, x: number, y: number, w: number, h: number): 
   y,
   w,
   h,
-  textureKey: tileKey
+  textureKey: tileKey,
+  kind: 'oneWay'
 });
 
 const trap = (type: TrapType, x: number, y: number, w: number, h: number): TrapData => ({ type, x, y, w, h });

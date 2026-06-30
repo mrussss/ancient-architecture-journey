@@ -3,6 +3,13 @@ export interface ImageAsset {
   path: string;
 }
 
+export interface SpriteSheetAsset {
+  key: string;
+  path: string;
+  frameWidth: number;
+  frameHeight: number;
+}
+
 export const imageAssets: ImageAsset[] = [
   { key: 'bg_bridge', path: 'assets/images/backgrounds/level1_bridge.png' },
   { key: 'bg_huizhou', path: 'assets/images/backgrounds/level2_huizhou.png' },
@@ -52,6 +59,10 @@ export const imageAssets: ImageAsset[] = [
   { key: 'comic_level4_complete', path: 'assets/images/comics/level4_complete.png' },
   { key: 'comic_final_1', path: 'assets/images/comics/final_1.png' },
   { key: 'comic_final_2', path: 'assets/images/comics/final_2.png' }
+];
+
+export const spriteSheetAssets: SpriteSheetAsset[] = [
+  { key: 'player_walk_sheet', path: 'assets/images/player/xiaoyan_walk_sheet.png', frameWidth: 72, frameHeight: 96 }
 ];
 
 export const enemyTextureByType = {

@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { imageAssets } from '../data/assets';
+import { imageAssets, spriteSheetAssets } from '../data/assets';
 import { WINDOW_HEIGHT, WINDOW_WIDTH } from '../constants';
 
 export class PreloadScene extends Phaser.Scene {
@@ -27,18 +27,19 @@ export class PreloadScene extends Phaser.Scene {
     for (const asset of imageAssets) {
       this.load.image(asset.key, asset.path);
     }
+    for (const asset of spriteSheetAssets) {
+      this.load.spritesheet(asset.key, asset.path, {
+        frameWidth: asset.frameWidth,
+        frameHeight: asset.frameHeight
+      });
+    }
   }
 
   create(): void {
     if (!this.anims.exists('xiaoyan-walk')) {
       this.anims.create({
         key: 'xiaoyan-walk',
-        frames: [
-          { key: 'player_walk_1' },
-          { key: 'player_walk_2' },
-          { key: 'player_walk_3' },
-          { key: 'player_walk_4' }
-        ],
+        frames: this.anims.generateFrameNumbers('player_walk_sheet', { start: 0, end: 3 }),
         frameRate: 8,
         repeat: -1
       });

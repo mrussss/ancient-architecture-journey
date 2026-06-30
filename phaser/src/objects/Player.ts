@@ -21,6 +21,10 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   readonly spawnY: number;
   readonly attackHitbox: Phaser.GameObjects.Zone;
   private attackReadyAt = 0;
+  private lastGroundedAt = 0;
+  private jumpBufferedUntil = 0;
+  private readonly coyoteTimeMs = 90;
+  private readonly jumpBufferMs = 120;
 
   constructor(scene: Phaser.Scene, x: number, y: number) {
     super(scene, x, y, 'player_idle');
@@ -30,10 +34,8 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     scene.physics.add.existing(this);
 
     this.setOrigin(0.5, 1);
-    this.setDisplaySize(72, 96);
     this.setCollideWorldBounds(false);
-    this.body!.setSize(PLAYER_WIDTH, PLAYER_HEIGHT);
-    this.body!.setOffset((this.width - PLAYER_WIDTH) * 0.5, this.height - PLAYER_HEIGHT);
+    this.applyVisualSize();
 
     this.attackHitbox = scene.add.zone(x, y, PLAYER_WIDTH * 1.8, PLAYER_HEIGHT * 0.75);
     scene.physics.add.existing(this.attackHitbox);
@@ -44,6 +46,14 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 
   updateFromControls(controls: ControlState, time: number): void {
     const body = this.body as Phaser.Physics.Arcade.Body;
+    const grounded = body.blocked.down || body.touching.down || body.onFloor();
+    if (grounded) {
+      this.lastGroundedAt = time;
+    }
+    if (controls.jumpPressed) {
+      this.jumpBufferedUntil = time + this.jumpBufferMs;
+    }
+
     if (controls.left) {
       body.setVelocityX(-PLAYER_SPEED);
       this.facing = 'left';
@@ -56,8 +66,10 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       body.setVelocityX(0);
     }
 
-    if (controls.jumpPressed && body.blocked.down) {
+    if (time <= this.jumpBufferedUntil && time - this.lastGroundedAt <= this.coyoteTimeMs) {
       body.setVelocityY(PLAYER_JUMP_VELOCITY);
+      this.jumpBufferedUntil = 0;
+      this.lastGroundedAt = 0;
     }
 
     if (controls.attackPressed) {
@@ -96,6 +108,8 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.setPosition(this.spawnX, this.spawnY);
     const body = this.body as Phaser.Physics.Arcade.Body;
     body.setVelocity(0, 0);
+    this.lastGroundedAt = 0;
+    this.jumpBufferedUntil = 0;
     this.damage(0);
     this.isInvincible = true;
     this.scene.time.delayedCall(INVINCIBLE_TIME, () => {
@@ -116,13 +130,13 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.attackReadyAt = time + ATTACK_COOLDOWN;
     this.anims.stop();
     this.setTexture('player_attack');
-    this.setDisplaySize(88, 96);
+    this.applyVisualSize();
     const body = this.attackHitbox.body as Phaser.Physics.Arcade.Body;
     body.enable = true;
     this.updateAttackHitbox();
     this.scene.time.delayedCall(ATTACK_DURATION, () => {
       this.isAttacking = false;
-      this.setDisplaySize(72, 96);
+      this.applyVisualSize();
       body.enable = false;
     });
   }
@@ -134,14 +148,27 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     if (!body.blocked.down) {
       this.anims.stop();
       this.setTexture('player_jump');
+      this.applyVisualSize();
       return;
     }
     if (Math.abs(body.velocity.x) > 5) {
       this.play('xiaoyan-walk', true);
+      this.applyVisualSize();
       return;
     }
     this.anims.stop();
     this.setTexture('player_idle');
+    this.applyVisualSize();
+  }
+
+  private applyVisualSize(): void {
+    this.setDisplaySize(72, 96);
+    if (!this.body) {
+      return;
+    }
+    const body = this.body as Phaser.Physics.Arcade.Body;
+    body.setSize(PLAYER_WIDTH, PLAYER_HEIGHT);
+    body.setOffset((this.width - PLAYER_WIDTH) * 0.5, this.height - PLAYER_HEIGHT);
   }
 
   private updateAttackHitbox(): void {

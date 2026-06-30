@@ -4,6 +4,7 @@ export interface ControlState {
   left: boolean;
   right: boolean;
   jumpPressed: boolean;
+  jumpHeld: boolean;
   attackPressed: boolean;
   restartPressed: boolean;
   escapePressed: boolean;
@@ -24,7 +25,11 @@ export class Controls {
     return {
       left: this.cursors.left.isDown || this.keys.A.isDown,
       right: this.cursors.right.isDown || this.keys.D.isDown,
-      jumpPressed: Phaser.Input.Keyboard.JustDown(this.keys.SPACE) || Phaser.Input.Keyboard.JustDown(this.cursors.up),
+      jumpPressed:
+        Phaser.Input.Keyboard.JustDown(this.keys.SPACE) ||
+        Phaser.Input.Keyboard.JustDown(this.cursors.up) ||
+        Phaser.Input.Keyboard.JustDown(this.keys.W),
+      jumpHeld: this.keys.SPACE.isDown || this.cursors.up.isDown || this.keys.W.isDown,
       attackPressed: Phaser.Input.Keyboard.JustDown(this.keys.J),
       restartPressed: Phaser.Input.Keyboard.JustDown(this.keys.R),
       escapePressed: Phaser.Input.Keyboard.JustDown(this.keys.ESC),
