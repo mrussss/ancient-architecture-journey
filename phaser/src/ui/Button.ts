@@ -1,28 +1,48 @@
 import Phaser from 'phaser';
 
+export type ButtonVariant = 'primary' | 'secondary' | 'small';
+
 export class Button extends Phaser.GameObjects.Container {
-  private background: Phaser.GameObjects.Rectangle;
+  private background: Phaser.GameObjects.Rectangle | Phaser.GameObjects.Image;
   private hitZone: Phaser.GameObjects.Zone;
   private label: Phaser.GameObjects.Text;
   private visual: Phaser.GameObjects.Container;
   private selected = false;
   private onClick: () => void;
+  private readonly baseTint = 0xffffff;
 
-  constructor(scene: Phaser.Scene, x: number, y: number, width: number, height: number, text: string, onClick: () => void) {
+  constructor(
+    scene: Phaser.Scene,
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    text: string,
+    onClick: () => void,
+    variant: ButtonVariant = 'secondary'
+  ) {
     super(scene, x, y);
     this.setSize(width, height);
     this.onClick = onClick;
 
-    this.background = scene.add.rectangle(0, 0, width, height, 0x3d5260, 0.9).setStrokeStyle(2, 0xd7bd6a);
+    const textureKey = this.getTextureKey(scene, variant);
+    if (textureKey) {
+      this.background = scene.add.image(0, 0, textureKey).setDisplaySize(width, height);
+    } else {
+      this.background = scene.add.rectangle(0, 0, width, height, 0x25323b, 0.88).setStrokeStyle(2, 0xd7bd6a);
+    }
+
+    const fontSize = Math.max(14, Math.min(22, Math.floor(height * (variant === 'small' ? 0.42 : 0.38))));
     this.label = scene.add
       .text(0, 0, text, {
         fontFamily: 'Arial, "Microsoft YaHei", sans-serif',
-        fontSize: '20px',
+        fontSize: `${fontSize}px`,
         color: '#fff3d0',
-        align: 'center'
+        align: 'center',
+        fixedWidth: Math.max(0, width - 28)
       })
       .setOrigin(0.5);
-    this.hitZone = scene.add.zone(0, 0, width + 32, height + 32).setOrigin(0.5);
+    this.hitZone = scene.add.zone(0, 0, width, height).setOrigin(0.5);
     this.hitZone.setInteractive({ useHandCursor: true });
     this.visual = scene.add.container(0, 0, [this.background, this.label]);
 
@@ -37,8 +57,13 @@ export class Button extends Phaser.GameObjects.Container {
 
   setSelected(value: boolean): this {
     this.selected = value;
-    this.background.setFillStyle(value ? 0xb88743 : 0x3d5260, 0.95);
-    this.background.setStrokeStyle(2, value ? 0xffe08a : 0xd7bd6a);
+    if (this.background instanceof Phaser.GameObjects.Rectangle) {
+      this.background.setFillStyle(value ? 0x7a5d2a : 0x25323b, value ? 0.96 : 0.88);
+      this.background.setStrokeStyle(2, value ? 0xffe08a : 0xd7bd6a);
+    } else {
+      this.background.setTint(value ? 0xffefbf : this.baseTint);
+      this.background.setAlpha(value ? 1 : 0.96);
+    }
     this.label.setColor(value ? '#ffffff' : '#fff3d0');
     this.scene.tweens.killTweensOf(this.visual);
     this.scene.tweens.add({ targets: this.visual, scale: value ? 1.03 : 1, duration: 80 });
@@ -57,5 +82,21 @@ export class Button extends Phaser.GameObjects.Container {
       yoyo: true
     });
     this.onClick();
+  }
+
+  private getTextureKey(scene: Phaser.Scene, variant: ButtonVariant): string | undefined {
+    if (variant === 'primary' && scene.textures.exists('ui_button_primary')) {
+      return 'ui_button_primary';
+    }
+    if (variant === 'secondary' && scene.textures.exists('ui_button_secondary')) {
+      return 'ui_button_secondary';
+    }
+    if (variant === 'small' && scene.textures.exists('ui_button_secondary')) {
+      return 'ui_button_secondary';
+    }
+    if (scene.textures.exists('ui_button')) {
+      return 'ui_button';
+    }
+    return undefined;
   }
 }

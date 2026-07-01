@@ -88,7 +88,9 @@ cd phaser
 npm run build
 ```
 
-Phaser 版实现了主菜单、关卡选择、剧情页、四关平台闯关、HUD、敌人、陷阱、残页收集、Game Over、Level Complete 和最终结局。
+构建产物位于 `phaser/dist/`。建议通过 `npm run preview` 或静态 Web 服务打开，不建议直接双击 `dist/index.html`。当前仓库尚未引入 Electron / Tauri；如需 Windows 绿色版，可在后续以 `dist/` 为前端资源打包成 zip，目标是玩家解压后双击 exe 即可游玩，不需要安装 Node.js、npm 或 VS Code。
+
+Phaser 版实现了主菜单、关卡选择、作品说明、剧情 CG、四关平台闯关、HUD、敌人、陷阱、残页收集、Game Over、Level Complete、最终结局、BGM 音量控制和 Debug Overlay。
 
 ## 操作
 

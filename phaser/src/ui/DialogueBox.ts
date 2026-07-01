@@ -2,7 +2,7 @@ import Phaser from 'phaser';
 import type { StoryPage } from '../data/story';
 
 export class DialogueBox {
-  private panel: Phaser.GameObjects.Rectangle;
+  private panel: Phaser.GameObjects.Rectangle | Phaser.GameObjects.Image;
   private speakerText: Phaser.GameObjects.Text;
   private bodyText: Phaser.GameObjects.Text;
   private fullText = '';
@@ -11,7 +11,9 @@ export class DialogueBox {
   private readonly charsPerSecond = 34;
 
   constructor(private scene: Phaser.Scene) {
-    this.panel = scene.add.rectangle(480, 434, 840, 160, 0x11181c, 0.82).setStrokeStyle(2, 0xd7bd6a).setDepth(30);
+    this.panel = scene.textures.exists('ui_dialog_panel')
+      ? scene.add.image(480, 432, 'ui_dialog_panel').setDisplaySize(850, 166).setAlpha(0.95).setDepth(30)
+      : scene.add.rectangle(480, 434, 840, 160, 0x11181c, 0.82).setStrokeStyle(2, 0xd7bd6a).setDepth(30);
     this.speakerText = scene.add.text(90, 370, '', {
       fontFamily: 'Arial, "Microsoft YaHei", sans-serif',
       fontSize: '22px',
@@ -21,7 +23,8 @@ export class DialogueBox {
       fontFamily: 'Arial, "Microsoft YaHei", sans-serif',
       fontSize: '22px',
       color: '#fff8e8',
-      wordWrap: { width: 780 }
+      wordWrap: { width: 780 },
+      lineSpacing: 5
     }).setDepth(31);
     scene.add.text(720, 492, '空格 / 回车 / 点击', {
       fontFamily: 'Arial, "Microsoft YaHei", sans-serif',

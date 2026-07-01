@@ -30,6 +30,7 @@ export class GameScene extends Phaser.Scene {
   private traps!: Phaser.Physics.Arcade.StaticGroup;
   private pages!: Phaser.Physics.Arcade.Group;
   private goal!: Phaser.Physics.Arcade.StaticImage;
+  private goalVisual!: Phaser.GameObjects.Image;
   private hud!: Hud;
   private debugOverlay!: DebugOverlay;
   private background!: ParallaxBackground;
@@ -64,14 +65,7 @@ export class GameScene extends Phaser.Scene {
     this.createEnemies();
 
     this.player = new Player(this, this.level.spawn.x, this.level.spawn.y);
-    this.goal = this.physics.add.staticImage(
-      this.level.goal.x + this.level.goal.w / 2,
-      this.level.goal.y + this.level.goal.h / 2,
-      'ui_portal'
-    );
-    this.goal.setDisplaySize(this.level.goal.w, this.level.goal.h);
-    this.goal.refreshBody();
-    this.tweens.add({ targets: this.goal, alpha: 0.55, scale: 1.08, duration: 760, yoyo: true, repeat: -1 });
+    this.createGoal();
 
     this.physics.add.collider(this.player, this.groundPlatforms);
     this.physics.add.collider(this.player, this.solidBlockPlatforms);
@@ -124,6 +118,7 @@ export class GameScene extends Phaser.Scene {
       return true;
     });
     this.background.update(this.cameras.main);
+    this.updateGoalVisual();
     this.debugOverlay.update();
     this.hud.update(this.player.hp, this.pageCount, this.level.pages.length);
 
@@ -203,6 +198,58 @@ export class GameScene extends Phaser.Scene {
     }
   }
 
+  private createGoal(): void {
+    const centerX = this.level.goal.x + this.level.goal.w / 2;
+    const centerY = this.level.goal.y + this.level.goal.h / 2;
+    const triggerKey = this.textures.exists('portal_idle') ? 'portal_idle' : 'ui_portal';
+    const visualKey = this.textures.exists('portal_idle') ? 'portal_idle' : 'ui_portal';
+
+    this.goalVisual = this.add.image(centerX, centerY - 10, visualKey);
+    this.goalVisual.setDisplaySize(96, 136);
+    this.goalVisual.setDepth(22);
+    this.tweens.add({
+      targets: this.goalVisual,
+      y: centerY - 16,
+      scaleX: 1.04,
+      scaleY: 1.04,
+      alpha: 0.9,
+      duration: 980,
+      ease: 'Sine.easeInOut',
+      yoyo: true,
+      repeat: -1
+    });
+
+    const glow = this.add.ellipse(centerX, centerY - 4, 112, 150, 0x7ccfff, 0.15);
+    glow.setBlendMode(Phaser.BlendModes.ADD).setDepth(21);
+    this.tweens.add({
+      targets: glow,
+      scale: 1.14,
+      alpha: 0.28,
+      duration: 1120,
+      yoyo: true,
+      repeat: -1
+    });
+
+    this.goal = this.physics.add.staticImage(centerX, centerY, triggerKey);
+    this.goal.setDisplaySize(this.level.goal.w, this.level.goal.h);
+    this.goal.setVisible(false);
+    this.goal.refreshBody();
+  }
+
+  private updateGoalVisual(): void {
+    if (!this.goalVisual || !this.player) {
+      return;
+    }
+    const distance = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.goalVisual.x, this.goalVisual.y);
+    const active = distance < 150;
+    if (active && this.textures.exists('portal_active') && this.goalVisual.texture.key !== 'portal_active') {
+      this.goalVisual.setTexture('portal_active').setDisplaySize(104, 146);
+    } else if (!active && this.textures.exists('portal_idle') && this.goalVisual.texture.key !== 'portal_idle') {
+      this.goalVisual.setTexture('portal_idle').setDisplaySize(96, 136);
+    }
+    this.goalVisual.setAlpha(active ? 1 : 0.9);
+  }
+
   private handleTrapHit(): void {
     if (this.player.damage(1) && this.player.isDead()) {
       this.scene.start('GameOverScene', { levelId: this.level.id });
@@ -242,7 +289,9 @@ export class GameScene extends Phaser.Scene {
     this.scene.start('StoryScene', {
       levelId: this.level.id,
       storyType: 'complete',
-      nextScene: this.level.id >= 4 ? 'FinalScene' : 'LevelCompleteScene'
+      nextScene: this.level.id >= 4 ? 'FinalScene' : 'LevelCompleteScene',
+      pagesCollected: this.pageCount,
+      totalPages: this.level.pages.length
     });
   }
 
@@ -262,9 +311,9 @@ export class GameScene extends Phaser.Scene {
       .rectangle(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, WINDOW_WIDTH, WINDOW_HEIGHT, 0x000000, 0.42)
       .setScrollFactor(0)
       .setDepth(2000);
-    const panel = this.add
-      .rectangle(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, 500, 340, 0x11181c, 0.88)
-      .setStrokeStyle(2, 0xd7bd6a)
+    const panel = (this.textures.exists('ui_result_panel')
+      ? this.add.image(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, 'ui_result_panel').setDisplaySize(520, 352).setAlpha(0.96)
+      : this.add.rectangle(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, 500, 340, 0x11181c, 0.88).setStrokeStyle(2, 0xd7bd6a))
       .setScrollFactor(0)
       .setDepth(2000);
     const title = this.add.text(WINDOW_WIDTH / 2, 158, '暂停', {

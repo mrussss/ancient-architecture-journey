@@ -50,6 +50,10 @@ npm run sync-assets
 - `assets/images/backgrounds/`：四关正式背景图。
 - `assets/images/player/`、`assets/images/enemies/`、`assets/images/traps/`：角色、敌人和陷阱素材，来自前一轮共享素材库。
 - `assets/images/tilesets/`：本轮新增的 Image2 / 内置生图生成平台材质，用于 tileset 平台渲染。
+- `assets/images/ui/`：主菜单、按钮、关卡卡片、HUD、结算面板等正式 UI 贴图。
+- `assets/images/icons/`：HUD 体力、残页等小图标。
+- `assets/images/portal/`：章节终点传送门贴图。
+- `assets/images/cg/`：漫画式剧情 CG，统一为现代学生小研的青绿色外套、深色裤子和背包形象。
 - `phaser/public/assets/images/`：运行时自动同步目录，不需要手动维护。
 
 ## 运行
@@ -72,6 +76,32 @@ http://localhost:5173
 npm run build
 npm run preview
 ```
+
+`npm run build` 会输出网页成品到：
+
+```text
+phaser/dist/
+```
+
+把 `dist/` 目录部署到任意静态 Web 服务即可游玩。直接双击 `dist/index.html` 可能会因为浏览器本地文件安全策略导致资源加载失败，建议用 `npm run preview` 或静态服务器打开。
+
+## Windows 成品包装
+
+当前 Phaser 版还没有引入 Electron / Tauri 打包配置，本轮不强行增加桌面打包系统。现阶段可交付方式是：
+
+```bash
+npm run build
+npm run preview
+```
+
+如果后续需要“Windows 绿色版”，推荐在现有 `dist/` 网页成品外层接入 Electron 或 Tauri，再打包为 zip。目标交付形态应为：
+
+```text
+一跃千年-古建奇旅-win32-x64.zip
+└─ 解压后双击 exe 即可游玩
+```
+
+最终玩家不需要安装 Node.js、npm 或 VS Code；这些只应是开发和打包阶段依赖。
 
 ## 操作
 

@@ -5,10 +5,14 @@ import { Button } from '../ui/Button';
 
 interface LevelCompleteData {
   levelId: number;
+  pagesCollected?: number;
+  totalPages?: number;
 }
 
 export class LevelCompleteScene extends Phaser.Scene {
   private levelId = 1;
+  private pagesCollected = 0;
+  private totalPages = 0;
 
   constructor() {
     super('LevelCompleteScene');
@@ -16,26 +20,54 @@ export class LevelCompleteScene extends Phaser.Scene {
 
   init(data: LevelCompleteData): void {
     this.levelId = data.levelId ?? 1;
+    const level = getLevel(this.levelId);
+    this.totalPages = data.totalPages ?? level.pages.length;
+    this.pagesCollected = data.pagesCollected ?? this.totalPages;
   }
 
   create(): void {
     const level = getLevel(this.levelId);
-    this.add.image(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, level.backgroundKey).setDisplaySize(WINDOW_WIDTH, WINDOW_HEIGHT).setAlpha(0.86);
-    this.add.rectangle(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, 560, 360, 0x11181c, 0.78).setStrokeStyle(2, 0xd7bd6a);
-    this.add.text(WINDOW_WIDTH / 2, 145, '残页归卷', {
+    const bg = this.add.image(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, level.backgroundKey).setAlpha(0.84);
+    this.coverImage(bg);
+    this.add.rectangle(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, WINDOW_WIDTH, WINDOW_HEIGHT, 0x050607, 0.36);
+    this.add.image(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, 'ui_result_panel').setDisplaySize(640, 392).setAlpha(0.98);
+    this.add.text(WINDOW_WIDTH / 2, 128, `${level.title.split('：')[0]}完成`, {
       fontFamily: 'Arial, "Microsoft YaHei", sans-serif',
-      fontSize: '38px',
+      fontSize: '34px',
       color: '#ffe08a'
     }).setOrigin(0.5);
-    this.add.text(WINDOW_WIDTH / 2, 198, '本章残页已收齐', {
+    this.add.text(WINDOW_WIDTH / 2, 178, `残页归卷：${this.pagesCollected} / ${this.totalPages}`, {
       fontFamily: 'Arial, "Microsoft YaHei", sans-serif',
       fontSize: '22px',
       color: '#fff3d0'
     }).setOrigin(0.5);
-    new Button(this, WINDOW_WIDTH / 2, 270, 260, 52, '继续旅程', () => {
+    this.add.text(WINDOW_WIDTH / 2, 230, this.summaryForLevel(this.levelId), {
+      fontFamily: 'Arial, "Microsoft YaHei", sans-serif',
+      fontSize: '18px',
+      color: '#fff8e8',
+      align: 'center',
+      wordWrap: { width: 520 },
+      lineSpacing: 6
+    }).setOrigin(0.5);
+    new Button(this, WINDOW_WIDTH / 2, 314, 250, 48, '继续下一章', () => {
       this.scene.start('StoryScene', { levelId: this.levelId + 1, storyType: 'intro', nextScene: 'GameScene' });
-    });
-    new Button(this, WINDOW_WIDTH / 2, 335, 260, 52, '重访本章', () => this.scene.start('GameScene', { levelId: this.levelId }));
-    new Button(this, WINDOW_WIDTH / 2, 400, 260, 52, '返回选关', () => this.scene.start('LevelSelectScene'));
+    }, 'primary');
+    new Button(this, WINDOW_WIDTH / 2, 370, 250, 44, '重访本章', () => this.scene.start('GameScene', { levelId: this.levelId }));
+    new Button(this, WINDOW_WIDTH / 2, 422, 250, 44, '返回选关', () => this.scene.start('LevelSelectScene'));
+  }
+
+  private summaryForLevel(levelId: number): string {
+    const summaries: Record<number, string> = {
+      1: '石拱的弧线重新清晰，古桥记忆已被修复。',
+      2: '屋檐与梁架在光中重现，民居记忆已被修复。',
+      3: '门楼与堂屋秩序归位，县署记忆已被修复。'
+    };
+    return summaries[levelId] ?? '建筑记忆已被修复。';
+  }
+
+  private coverImage(image: Phaser.GameObjects.Image): void {
+    const source = image.texture.getSourceImage() as HTMLImageElement;
+    const scale = Math.max(WINDOW_WIDTH / source.width, WINDOW_HEIGHT / source.height);
+    image.setDisplaySize(source.width * scale, source.height * scale);
   }
 }
