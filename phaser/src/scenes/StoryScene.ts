@@ -2,6 +2,8 @@ import Phaser from 'phaser';
 import { WINDOW_HEIGHT, WINDOW_WIDTH } from '../constants';
 import { getLevel } from '../data/levels';
 import { getStoryPages, type StoryPage, type StoryType } from '../data/story';
+import type { AchievementId } from '../systems/AchievementManager';
+import { AchievementToast } from '../ui/AchievementToast';
 import { DialogueBox } from '../ui/DialogueBox';
 
 interface StoryInitData {
@@ -10,6 +12,8 @@ interface StoryInitData {
   nextScene: string;
   pagesCollected?: number;
   totalPages?: number;
+  damageTaken?: number;
+  newlyUnlocked?: AchievementId[];
 }
 
 export class StoryScene extends Phaser.Scene {
@@ -20,6 +24,8 @@ export class StoryScene extends Phaser.Scene {
   private pageIndex = 0;
   private pagesCollected = 0;
   private totalPages = 0;
+  private damageTaken = 0;
+  private newlyUnlocked: AchievementId[] = [];
   private dialogue?: DialogueBox;
   private backgroundLayer?: Phaser.GameObjects.Image;
   private shadeLayer?: Phaser.GameObjects.Rectangle;
@@ -36,6 +42,8 @@ export class StoryScene extends Phaser.Scene {
     this.pages = getStoryPages(this.levelId, this.storyType);
     this.pagesCollected = data.pagesCollected ?? 0;
     this.totalPages = data.totalPages ?? getLevel(this.levelId).pages.length;
+    this.damageTaken = data.damageTaken ?? 0;
+    this.newlyUnlocked = data.newlyUnlocked ?? [];
     this.pageIndex = 0;
   }
 
@@ -48,6 +56,9 @@ export class StoryScene extends Phaser.Scene {
     this.input.keyboard!.on('keydown-ENTER', () => this.nextPage());
     this.input.on('pointerdown', () => this.nextPage());
     this.cameras.main.fadeIn(220, 0, 0, 0);
+    if (this.storyType === 'complete' && this.newlyUnlocked.length > 0) {
+      this.time.delayedCall(500, () => AchievementToast.show(this, this.newlyUnlocked));
+    }
   }
 
   update(_time: number, delta: number): void {
@@ -63,7 +74,9 @@ export class StoryScene extends Phaser.Scene {
       this.scene.start(this.nextScene, {
         levelId: this.levelId,
         pagesCollected: this.pagesCollected,
-        totalPages: this.totalPages
+        totalPages: this.totalPages,
+        damageTaken: this.damageTaken,
+        newlyUnlocked: this.newlyUnlocked
       });
       return;
     }

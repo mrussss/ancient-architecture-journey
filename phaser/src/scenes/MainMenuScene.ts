@@ -89,7 +89,7 @@ export class MainMenuScene extends Phaser.Scene {
     }).setOrigin(0.5);
     const body = this.add.text(
       WINDOW_WIDTH / 2 - 230,
-      150,
+      178,
       [
         '作品名称：《一跃千年：古建奇旅》',
         '作品类型：中国古代建筑主题 2D 横版平台跳跃游戏',
@@ -103,13 +103,13 @@ export class MainMenuScene extends Phaser.Scene {
       ].join('\n'),
       {
         fontFamily: 'Arial, "Microsoft YaHei", sans-serif',
-        fontSize: '15px',
+        fontSize: '14px',
         color: '#e8dcc2',
         align: 'left',
         wordWrap: { width: 460 },
-        lineSpacing: 6,
+        lineSpacing: 5,
         fixedWidth: 460,
-        fixedHeight: 245
+        fixedHeight: 210
       }
     ).setOrigin(0, 0);
     const closeButton = new Button(this, WINDOW_WIDTH / 2, 420, 210, 42, '返回主菜单', () => {

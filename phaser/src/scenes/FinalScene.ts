@@ -18,7 +18,7 @@ export class FinalScene extends Phaser.Scene {
     const panelY = WINDOW_HEIGHT / 2 + 12;
     this.add.image(panelX, panelY, 'ui_result_panel').setDisplaySize(760, 392).setAlpha(0.96);
 
-    this.add.text(WINDOW_WIDTH / 2, 190, '古法重光', {
+    this.add.text(WINDOW_WIDTH / 2, 172, '古法重光', {
       fontFamily: 'Arial, "Microsoft YaHei", sans-serif',
       fontSize: '30px',
       color: '#ffe08a',
@@ -26,26 +26,26 @@ export class FinalScene extends Phaser.Scene {
       strokeThickness: 3
     }).setOrigin(0.5);
 
-    this.add.text(WINDOW_WIDTH / 2, 230, '四章残页已归卷，完整古建图卷重现。', {
+    this.add.text(WINDOW_WIDTH / 2, 212, '四章残页已归卷，完整古建图卷重现。', {
       fontFamily: 'Arial, "Microsoft YaHei", sans-serif',
       fontSize: '18px',
       color: '#efe2c5',
       align: 'center',
-      fixedWidth: 560
+      fixedWidth: 520
     }).setOrigin(0.5);
 
-    const bodyText = getStoryPages(4, 'final').map((page) => page.text).join('\n\n');
-    const body = this.add.text(WINDOW_WIDTH / 2 - 280, 268, bodyText, {
+    const bodyText = this.wrapChineseText(getStoryPages(4, 'final').map((page) => page.text).join('\n'), 24);
+    const body = this.add.text(WINDOW_WIDTH / 2 - 220, 264, bodyText, {
       fontFamily: 'Arial, "Microsoft YaHei", sans-serif',
       fontSize: '16px',
       color: '#efe2c5',
       align: 'left',
-      wordWrap: { width: 560 },
-      fixedWidth: 560,
-      fixedHeight: 78,
+      wordWrap: { width: 440 },
+      fixedWidth: 440,
+      fixedHeight: 118,
       lineSpacing: 6
     }).setOrigin(0, 0);
-    this.fitTextHeight(body, 78, 14);
+    this.fitTextHeight(body, 118, 14);
 
     new Button(this, WINDOW_WIDTH / 2 - 145, 420, 220, 42, '返回主菜单', () => this.scene.start('MainMenuScene'));
     new Button(this, WINDOW_WIDTH / 2 + 145, 420, 220, 42, '重新开始', () => {
@@ -65,5 +65,21 @@ export class FinalScene extends Phaser.Scene {
       fontSize -= 1;
       text.setFontSize(fontSize);
     }
+  }
+
+  private wrapChineseText(text: string, maxCharsPerLine: number): string {
+    return text
+      .split('\n')
+      .map((line) => {
+        if (line.length <= maxCharsPerLine) {
+          return line;
+        }
+        const chunks: string[] = [];
+        for (let i = 0; i < line.length; i += maxCharsPerLine) {
+          chunks.push(line.slice(i, i + maxCharsPerLine));
+        }
+        return chunks.join('\n');
+      })
+      .join('\n');
   }
 }

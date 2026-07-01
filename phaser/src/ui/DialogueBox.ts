@@ -17,11 +17,11 @@ export class DialogueBox {
     const panelY = 432;
     const panelW = 850;
     const panelH = 176;
-    const safeLeft = 200;
-    const safeTop = 362;
-    const safeWidth = 560;
-    const bodyTop = 398;
-    const bodyMaxHeight = 82;
+    const safeLeft = 195;
+    const safeTop = 360;
+    const safeWidth = 590;
+    const bodyTop = 394;
+    const bodyMaxHeight = 108;
 
     this.panel = scene.textures.exists('ui_dialog_panel')
       ? scene.add.image(panelX, panelY, 'ui_dialog_panel').setDisplaySize(panelW, panelH).setAlpha(0.95).setDepth(30)
@@ -34,14 +34,14 @@ export class DialogueBox {
     }).setDepth(31);
     this.bodyText = scene.add.text(safeLeft, bodyTop, '', {
       fontFamily: 'Arial, "Microsoft YaHei", sans-serif',
-      fontSize: '19px',
+      fontSize: '18px',
       color: '#efe2c5',
       wordWrap: { width: safeWidth },
       fixedWidth: safeWidth,
       fixedHeight: bodyMaxHeight,
       lineSpacing: 5,
     }).setDepth(31);
-    this.promptText = scene.add.text(700, 500, '空格 / 回车 / 点击', {
+    this.promptText = scene.add.text(700, 508, '空格 / 回车 / 点击', {
       fontFamily: 'Arial, "Microsoft YaHei", sans-serif',
       fontSize: '13px',
       color: '#c9d2c5'
@@ -80,17 +80,34 @@ export class DialogueBox {
       return;
     }
     this.lastRenderedText = text;
-    this.bodyText.setText(text);
+    this.bodyText.setText(this.wrapChineseText(text));
     this.fitBodyText();
   }
 
   private fitBodyText(): void {
-    const maxHeight = 82;
-    let fontSize = 19;
+    const maxHeight = 108;
+    let fontSize = 18;
     this.bodyText.setFontSize(fontSize);
-    while (this.bodyText.height > maxHeight && fontSize > 15) {
+    while (this.bodyText.height > maxHeight && fontSize > 14) {
       fontSize -= 1;
       this.bodyText.setFontSize(fontSize);
     }
+  }
+
+  private wrapChineseText(text: string, maxCharsPerLine = 26): string {
+    return text
+      .split('\n')
+      .map((line) => {
+        if (line.length <= maxCharsPerLine) {
+          return line;
+        }
+
+        const chunks: string[] = [];
+        for (let i = 0; i < line.length; i += maxCharsPerLine) {
+          chunks.push(line.slice(i, i + maxCharsPerLine));
+        }
+        return chunks.join('\n');
+      })
+      .join('\n');
   }
 }
