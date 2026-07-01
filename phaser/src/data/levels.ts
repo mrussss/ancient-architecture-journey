@@ -87,16 +87,19 @@ const goal = (x: number, y: number): RectData => ({ x, y, w: 56, h: 96, textureK
 function level1(): LevelData {
   const tileKey = 'tile_stone';
   const platforms: RectData[] = [];
-  addGroundRange(platforms, tileKey, 0, 672);
-  addGroundRange(platforms, tileKey, 776, 734);
-  addGroundRange(platforms, tileKey, 1622, 1058);
+
+  addGroundRange(platforms, tileKey, 0, 640);
+  addGroundRange(platforms, tileKey, 760, 560);
+  addGroundRange(platforms, tileKey, 1440, 1240);
+
   platforms.push(
-    platform(tileKey, 360, 420, 180, 24, 'solidBlock'),
-    platform(tileKey, 840, 388, 280, 24, 'solidBlock'),
-    platform(tileKey, 1210, 400, 260, 24, 'solidBlock'),
-    platform(tileKey, 1685, 384, 320, 24, 'solidBlock'),
-    platform(tileKey, 2150, 395, 220, 24, 'solidBlock')
+    platform(tileKey, 360, 400, 180, 24, 'solidBlock'),
+    platform(tileKey, 620, 350, 240, 24, 'oneWay'),
+    platform(tileKey, 930, 350, 240, 24, 'oneWay'),
+    platform(tileKey, 1180, 400, 140, 24, 'solidBlock'),
+    platform(tileKey, 1900, 360, 260, 24, 'oneWay')
   );
+
   return {
     id: 1,
     title: '第一章 古桥：水上千年通途',
@@ -109,15 +112,24 @@ function level1(): LevelData {
     spawn: { x: 80, y: groundY - 56 },
     platforms,
     traps: [
-      trap('water', 672, 492, 104, 42),
-      trap('water', 1510, 492, 112, 42),
-      trap('spike', 1312, 452, 76, 24)
+      trap('water', 640, 492, 120, 42),
+      trap('water', 1320, 492, 120, 42),
+      trap('spike', 1540, 452, 80, 24)
     ],
     enemies: [
-      enemy('stoneBeast', 960, groundY - 42, 44, 42, 880, 1240),
-      enemy('stoneBeast', 1780, groundY - 42, 44, 42, 1700, 2020)
+      enemy('stoneBeast', 920, groundY - 42, 44, 42, 820, 1160),
+      enemy('stoneBeast', 1760, groundY - 42, 44, 42, 1640, 1980)
     ],
-    pages: [page(405, 380), page(705, 430), page(960, 348), page(1265, 360), page(2195, 355)],
+    pages: [
+      page(420, 355),
+      page(700, 305),
+      page(1000, 305),
+      page(1230, 355),
+      page(1510, 430),
+      page(1950, 315),
+      page(2200, 430),
+      page(2470, 430)
+    ],
     goal: goal(2540, 380)
   };
 }
@@ -125,21 +137,23 @@ function level1(): LevelData {
 function level2(): LevelData {
   const tileKey = 'tile_wood';
   const platforms: RectData[] = [];
-  addGroundRange(platforms, tileKey, 0, 704);
-  addGroundRange(platforms, tileKey, 808, 612);
-  addGroundRange(platforms, tileKey, 1500, 590);
-  addGroundRange(platforms, tileKey, 2190, 730);
+
+  addGroundRange(platforms, tileKey, 0, 680);
+  addGroundRange(platforms, tileKey, 800, 580);
+  addGroundRange(platforms, tileKey, 1500, 520);
+  addGroundRange(platforms, tileKey, 2140, 780);
+
   platforms.push(
-    platform(tileKey, 390, 392, 170, 24, 'solidBlock'),
-    platform(tileKey, 610, 342, 190, 24),
-    platform(tileKey, 850, 305, 250, 24, 'solidBlock'),
-    platform(tileKey, 1160, 315, 190, 24),
-    platform(tileKey, 1410, 380, 140, 24, 'solidBlock'),
-    platform(tileKey, 1600, 396, 230, 24, 'solidBlock'),
-    platform(tileKey, 1865, 372, 150, 24, 'solidBlock'),
-    platform(tileKey, 2070, 342, 210, 24),
-    platform(tileKey, 2350, 410, 240, 24, 'solidBlock')
+    platform(tileKey, 330, 400, 170, 24, 'solidBlock'),
+    platform(tileKey, 560, 360, 210, 24, 'oneWay'),
+    platform(tileKey, 830, 325, 260, 24, 'solidBlock'),
+    platform(tileKey, 1140, 325, 250, 24, 'oneWay'),
+    platform(tileKey, 1510, 385, 220, 24, 'solidBlock'),
+    platform(tileKey, 1720, 350, 240, 24, 'oneWay'),
+    platform(tileKey, 2020, 325, 250, 24, 'solidBlock'),
+    platform(tileKey, 2350, 385, 240, 24, 'solidBlock')
   );
+
   return {
     id: 2,
     title: '第二章 徽居：白墙黑瓦之间',
@@ -152,16 +166,26 @@ function level2(): LevelData {
     spawn: { x: 80, y: groundY - 56 },
     platforms,
     traps: [
-      trap('spike', 704, 492, 104, 42),
-      trap('fallingStone', 1320, 452, 72, 24),
-      trap('fallingStone', 1940, 452, 72, 24),
-      trap('spike', 2090, 492, 100, 42)
+      trap('spike', 680, 492, 120, 42),
+      trap('fallingStone', 1380, 492, 120, 42),
+      trap('spike', 2020, 492, 120, 42)
     ],
     enemies: [
-      enemy('woodenPuppet', 1035, groundY - 42, 42, 42, 910, 1290),
-      enemy('woodenPuppet', 980, 263, 42, 42, 890, 1070)
+      enemy('woodenPuppet', 420, groundY - 42, 42, 42, 260, 560),
+      enemy('woodenPuppet', 950, 325 - 42, 42, 42, 870, 1040),
+      enemy('woodenPuppet', 1660, groundY - 42, 42, 42, 1540, 1880),
+      enemy('woodenPuppet', 2140, 325 - 42, 42, 42, 2070, 2220)
     ],
-    pages: [page(430, 350), page(675, 302), page(1000, 265), page(1690, 356), page(2415, 370)],
+    pages: [
+      page(390, 355),
+      page(650, 315),
+      page(930, 280),
+      page(1220, 280),
+      page(1560, 430),
+      page(1830, 305),
+      page(2140, 280),
+      page(2480, 340)
+    ],
     goal: goal(2760, 380)
   };
 }
@@ -169,20 +193,23 @@ function level2(): LevelData {
 function level3(): LevelData {
   const tileKey = 'tile_brick';
   const platforms: RectData[] = [];
-  addGroundRange(platforms, tileKey, 0, 760);
-  addGroundRange(platforms, tileKey, 900, 650);
-  addGroundRange(platforms, tileKey, 1660, 500);
+
+  addGroundRange(platforms, tileKey, 0, 720);
+  addGroundRange(platforms, tileKey, 840, 660);
+  addGroundRange(platforms, tileKey, 1620, 540);
   addGroundRange(platforms, tileKey, 2280, 780);
+
   platforms.push(
-    platform(tileKey, 360, 428, 160, 24, 'solidBlock'),
-    platform(tileKey, 560, 392, 160, 24, 'solidBlock'),
-    platform(tileKey, 920, 392, 220, 24, 'solidBlock'),
-    platform(tileKey, 1180, 404, 220, 24, 'solidBlock'),
-    platform(tileKey, 1430, 344, 190, 24),
-    platform(tileKey, 1740, 330, 220, 24),
-    platform(tileKey, 2030, 390, 190, 24, 'solidBlock'),
-    platform(tileKey, 2420, 392, 260, 24, 'solidBlock')
+    platform(tileKey, 300, 405, 160, 24, 'solidBlock'),
+    platform(tileKey, 520, 365, 180, 24, 'solidBlock'),
+    platform(tileKey, 760, 330, 240, 24, 'solidBlock'),
+    platform(tileKey, 1060, 330, 260, 24, 'oneWay'),
+    platform(tileKey, 1360, 380, 120, 24, 'solidBlock'),
+    platform(tileKey, 1680, 345, 250, 24, 'oneWay'),
+    platform(tileKey, 1980, 320, 250, 24, 'oneWay'),
+    platform(tileKey, 2380, 360, 280, 24, 'solidBlock')
   );
+
   return {
     id: 3,
     title: '第三章 县署：礼法秩序之门',
@@ -195,16 +222,26 @@ function level3(): LevelData {
     spawn: { x: 80, y: groundY - 56 },
     platforms,
     traps: [
-      trap('spike', 778, 492, 104, 42),
-      trap('fallingStone', 1285, 452, 80, 24),
-      trap('spike', 1572, 492, 72, 42),
-      trap('fallingStone', 2168, 492, 96, 42)
+      trap('spike', 720, 492, 120, 42),
+      trap('spike', 1500, 492, 120, 42),
+      trap('fallingStone', 2160, 492, 120, 42)
     ],
     enemies: [
-      enemy('yamenGuard', 1030, groundY - 42, 42, 42, 930, 1270),
-      enemy('yamenGuard', 2500, groundY - 42, 42, 42, 2330, 2700)
+      enemy('yamenGuard', 480, groundY - 42, 42, 42, 300, 650),
+      enemy('yamenGuard', 900, 330 - 42, 42, 42, 810, 970),
+      enemy('yamenGuard', 1780, groundY - 42, 42, 42, 1680, 2040),
+      enemy('yamenGuard', 2500, 360 - 42, 42, 42, 2420, 2620)
     ],
-    pages: [page(405, 388), page(610, 352), page(1480, 304), page(1805, 290), page(2515, 352)],
+    pages: [
+      page(350, 365),
+      page(600, 325),
+      page(850, 285),
+      page(1160, 285),
+      page(1420, 335),
+      page(1760, 300),
+      page(2080, 275),
+      page(2520, 315)
+    ],
     goal: goal(2905, 380)
   };
 }
@@ -212,21 +249,26 @@ function level3(): LevelData {
 function level4(): LevelData {
   const tileKey = 'tile_palace';
   const platforms: RectData[] = [];
-  addGroundRange(platforms, tileKey, 0, 680);
-  addGroundRange(platforms, tileKey, 812, 540);
-  addGroundRange(platforms, tileKey, 1480, 450);
-  addGroundRange(platforms, tileKey, 2060, 430);
-  addGroundRange(platforms, tileKey, 2620, 620);
+
+  addGroundRange(platforms, tileKey, 0, 650);
+  addGroundRange(platforms, tileKey, 780, 540);
+  addGroundRange(platforms, tileKey, 1450, 450);
+  addGroundRange(platforms, tileKey, 2030, 420);
+  addGroundRange(platforms, tileKey, 2580, 660);
+
   platforms.push(
-    platform(tileKey, 350, 420, 180, 24, 'solidBlock'),
-    platform(tileKey, 840, 382, 210, 24, 'solidBlock'),
-    platform(tileKey, 1085, 344, 190, 24),
-    platform(tileKey, 1420, 330, 190, 24),
-    platform(tileKey, 1740, 375, 250, 24, 'solidBlock'),
-    platform(tileKey, 2140, 325, 210, 24),
-    platform(tileKey, 2520, 368, 250, 24, 'solidBlock'),
-    platform(tileKey, 2840, 342, 220, 24)
+    platform(tileKey, 320, 405, 180, 24, 'solidBlock'),
+    platform(tileKey, 560, 365, 190, 24, 'solidBlock'),
+    platform(tileKey, 820, 330, 230, 24, 'solidBlock'),
+    platform(tileKey, 1100, 330, 230, 24, 'oneWay'),
+    platform(tileKey, 1460, 375, 220, 24, 'solidBlock'),
+    platform(tileKey, 1700, 340, 240, 24, 'oneWay'),
+    platform(tileKey, 2000, 315, 240, 24, 'solidBlock'),
+    platform(tileKey, 2300, 360, 140, 24, 'solidBlock'),
+    platform(tileKey, 2640, 330, 260, 24, 'solidBlock'),
+    platform(tileKey, 2940, 330, 220, 24, 'oneWay')
   );
+
   return {
     id: 4,
     title: '第四章 太和：中轴之巅',
@@ -239,17 +281,28 @@ function level4(): LevelData {
     spawn: { x: 80, y: groundY - 56 },
     platforms,
     traps: [
-      trap('fire', 692, 492, 108, 42),
-      trap('spike', 1368, 492, 96, 42),
-      trap('fire', 1848, 452, 88, 24),
-      trap('spike', 2508, 492, 96, 42),
-      trap('fire', 2700, 452, 92, 24)
+      trap('fire', 650, 492, 130, 42),
+      trap('spike', 1320, 492, 130, 42),
+      trap('fire', 1900, 492, 130, 42),
+      trap('spike', 2450, 492, 130, 42)
     ],
     enemies: [
-      enemy('palaceLion', 930, groundY - 42, 46, 42, 850, 1180),
-      enemy('palaceLion', 2670, groundY - 42, 46, 42, 2635, 2865)
+      enemy('palaceLion', 470, groundY - 42, 46, 42, 340, 620),
+      enemy('palaceLion', 930, 330 - 42, 46, 42, 860, 1010),
+      enemy('palaceLion', 1600, groundY - 42, 46, 42, 1500, 1840),
+      enemy('palaceLion', 2140, 315 - 42, 46, 42, 2050, 2210),
+      enemy('palaceLion', 2780, 330 - 42, 46, 42, 2680, 2860)
     ],
-    pages: [page(395, 380), page(1130, 330), page(1480, 290), page(2185, 285), page(2885, 310)],
+    pages: [
+      page(390, 365),
+      page(640, 325),
+      page(910, 285),
+      page(1180, 285),
+      page(1510, 335),
+      page(1810, 300),
+      page(2120, 270),
+      page(2780, 285)
+    ],
     goal: goal(3095, 380)
   };
 }
