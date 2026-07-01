@@ -9,33 +9,35 @@ export class Hud {
   private levelText: Phaser.GameObjects.Text;
 
   constructor(scene: Phaser.Scene, level: LevelData) {
+    const panelWidth = 390;
+    const panelHeight = 126;
     const panel = scene.textures.exists('ui_hud_panel')
-      ? scene.add.image(0, 0, 'ui_hud_panel').setOrigin(0).setDisplaySize(354, 118).setAlpha(0.96)
-      : scene.add.rectangle(0, 0, 354, 118, 0x11181c, 0.72).setOrigin(0).setStrokeStyle(1, 0xd7bd6a);
+      ? scene.add.image(0, 0, 'ui_hud_panel').setOrigin(0).setDisplaySize(panelWidth, panelHeight).setAlpha(0.96)
+      : scene.add.rectangle(0, 0, panelWidth, panelHeight, 0x11181c, 0.72).setOrigin(0).setStrokeStyle(1, 0xd7bd6a);
 
     for (let i = 0; i < MAX_HP; i += 1) {
       const key = scene.textures.exists('icon_heart_full') ? 'icon_heart_full' : 'ui_heart';
-      const heart = scene.add.image(26 + i * 30, 28, key).setDisplaySize(24, 24);
+      const heart = scene.add.image(44 + i * 32, 30, key).setDisplaySize(24, 24);
       this.hearts.push(heart);
     }
 
     const pageIcon = scene.textures.exists('icon_page')
-      ? scene.add.image(28, 62, 'icon_page').setDisplaySize(24, 24)
-      : scene.add.image(28, 62, 'item_page').setDisplaySize(22, 26);
+      ? scene.add.image(44, 68, 'icon_page').setDisplaySize(24, 24)
+      : scene.add.image(44, 68, 'item_page').setDisplaySize(22, 26);
 
-    this.pagesText = scene.add.text(48, 50, '', {
+    this.pagesText = scene.add.text(72, 56, '', {
       fontFamily: 'Arial, "Microsoft YaHei", sans-serif',
       fontSize: '18px',
-      color: '#fff0d0'
+      color: '#efe2c5'
     });
-    this.levelText = scene.add.text(20, 84, `当前：${this.shortTitle(level.title)}`, {
+    this.levelText = scene.add.text(36, 92, `当前：${this.shortTitle(level.title)}`, {
       fontFamily: 'Arial, "Microsoft YaHei", sans-serif',
-      fontSize: '14px',
-      color: '#dce6d6',
-      fixedWidth: 314
+      fontSize: '13px',
+      color: '#c9d2c5',
+      fixedWidth: 320
     });
     this.container = scene.add
-      .container(24, 20, [panel, ...this.hearts, pageIcon, this.pagesText, this.levelText])
+      .container(28, 24, [panel, ...this.hearts, pageIcon, this.pagesText, this.levelText])
       .setScrollFactor(0)
       .setDepth(1000);
   }

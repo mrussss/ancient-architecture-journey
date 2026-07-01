@@ -14,22 +14,24 @@ export class FinalScene extends Phaser.Scene {
     this.coverImage(bg);
     this.add.rectangle(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, WINDOW_WIDTH, WINDOW_HEIGHT, 0x050607, 0.34);
     this.add.image(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2 + 12, 'ui_result_panel').setDisplaySize(760, 392).setAlpha(0.96);
-    this.add.text(WINDOW_WIDTH / 2, 120, '古法重光', {
+    this.add.text(WINDOW_WIDTH / 2, 110, '古法重光', {
       fontFamily: 'Arial, "Microsoft YaHei", sans-serif',
-      fontSize: '40px',
+      fontSize: '38px',
       color: '#ffe08a'
     }).setOrigin(0.5);
     const text = ['四章残页已归卷，完整古建图卷重现。', ...getStoryPages(4, 'final').map((page) => page.text)].join('\n\n');
     this.add.text(WINDOW_WIDTH / 2, 245, text, {
       fontFamily: 'Arial, "Microsoft YaHei", sans-serif',
-      fontSize: '20px',
-      color: '#fff8e8',
+      fontSize: '18px',
+      color: '#efe2c5',
       align: 'center',
-      wordWrap: { width: 650 },
-      lineSpacing: 7
+      wordWrap: { width: 610 },
+      lineSpacing: 7,
+      fixedWidth: 610,
+      fixedHeight: 210
     }).setOrigin(0.5);
-    new Button(this, WINDOW_WIDTH / 2 - 145, 438, 240, 48, '返回主菜单', () => this.scene.start('MainMenuScene'));
-    new Button(this, WINDOW_WIDTH / 2 + 145, 438, 240, 48, '重新开始', () => {
+    new Button(this, WINDOW_WIDTH / 2 - 145, 440, 240, 48, '返回主菜单', () => this.scene.start('MainMenuScene'));
+    new Button(this, WINDOW_WIDTH / 2 + 145, 440, 240, 48, '重新开始', () => {
       this.scene.start('StoryScene', { levelId: 1, storyType: 'intro', nextScene: 'GameScene' });
     }, 'primary');
   }

@@ -148,8 +148,8 @@ function level2(): LevelData {
     platform(tileKey, 560, 330, 220, 24, 'oneWay'),
     platform(tileKey, 830, 315, 260, 24, 'solidBlock'),
     platform(tileKey, 1140, 315, 250, 24, 'oneWay'),
-    platform(tileKey, 1510, 350, 220, 24, 'oneWay'),
-    platform(tileKey, 1720, 330, 240, 24, 'oneWay'),
+    platform(tileKey, 1510, 350, 200, 24, 'oneWay'),
+    platform(tileKey, 1740, 330, 240, 24, 'oneWay'),
     platform(tileKey, 2020, 315, 250, 24, 'solidBlock'),
     platform(tileKey, 2350, 350, 240, 24, 'oneWay')
   );

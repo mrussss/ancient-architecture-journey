@@ -203,17 +203,19 @@ export class GameScene extends Phaser.Scene {
     const centerY = this.level.goal.y + this.level.goal.h / 2;
     const triggerKey = this.textures.exists('portal_idle') ? 'portal_idle' : 'ui_portal';
     const visualKey = this.textures.exists('portal_idle') ? 'portal_idle' : 'ui_portal';
+    const portalWidth = 104;
+    const portalHeight = 146;
 
     this.goalVisual = this.add.image(centerX, centerY - 10, visualKey);
-    this.goalVisual.setDisplaySize(96, 136);
+    this.goalVisual.setDisplaySize(portalWidth, portalHeight);
     this.goalVisual.setDepth(22);
     this.tweens.add({
       targets: this.goalVisual,
-      y: centerY - 16,
-      scaleX: 1.04,
-      scaleY: 1.04,
-      alpha: 0.9,
-      duration: 980,
+      y: centerY - 12,
+      displayWidth: portalWidth * 1.012,
+      displayHeight: portalHeight * 1.012,
+      alpha: 0.96,
+      duration: 1300,
       ease: 'Sine.easeInOut',
       yoyo: true,
       repeat: -1
@@ -223,9 +225,10 @@ export class GameScene extends Phaser.Scene {
     glow.setBlendMode(Phaser.BlendModes.ADD).setDepth(21);
     this.tweens.add({
       targets: glow,
-      scale: 1.14,
-      alpha: 0.28,
-      duration: 1120,
+      scale: 1.035,
+      alpha: 0.22,
+      duration: 1300,
+      ease: 'Sine.easeInOut',
       yoyo: true,
       repeat: -1
     });
@@ -242,12 +245,14 @@ export class GameScene extends Phaser.Scene {
     }
     const distance = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.goalVisual.x, this.goalVisual.y);
     const active = distance < 150;
+    const portalWidth = 104;
+    const portalHeight = 146;
     if (active && this.textures.exists('portal_active') && this.goalVisual.texture.key !== 'portal_active') {
-      this.goalVisual.setTexture('portal_active').setDisplaySize(104, 146);
+      this.goalVisual.setTexture('portal_active').setDisplaySize(portalWidth, portalHeight);
     } else if (!active && this.textures.exists('portal_idle') && this.goalVisual.texture.key !== 'portal_idle') {
-      this.goalVisual.setTexture('portal_idle').setDisplaySize(96, 136);
+      this.goalVisual.setTexture('portal_idle').setDisplaySize(portalWidth, portalHeight);
     }
-    this.goalVisual.setAlpha(active ? 1 : 0.9);
+    this.goalVisual.setAlpha(active ? 1 : 0.94);
   }
 
   private handleTrapHit(): void {

@@ -10,6 +10,7 @@ export class Button extends Phaser.GameObjects.Container {
   private selected = false;
   private onClick: () => void;
   private readonly baseTint = 0xffffff;
+  private readonly variant: ButtonVariant;
 
   constructor(
     scene: Phaser.Scene,
@@ -24,6 +25,7 @@ export class Button extends Phaser.GameObjects.Container {
     super(scene, x, y);
     this.setSize(width, height);
     this.onClick = onClick;
+    this.variant = variant;
 
     const textureKey = this.getTextureKey(scene, variant);
     if (textureKey) {
@@ -37,11 +39,13 @@ export class Button extends Phaser.GameObjects.Container {
       .text(0, 0, text, {
         fontFamily: 'Arial, "Microsoft YaHei", sans-serif',
         fontSize: `${fontSize}px`,
-        color: '#fff3d0',
-        align: 'center',
-        fixedWidth: Math.max(0, width - 28)
+        color: this.getTextColor(variant),
+        align: 'center'
       })
       .setOrigin(0.5);
+    this.label.setStroke(variant === 'primary' ? '#fff1b8' : '#1a1208', variant === 'primary' ? 1 : 2);
+    this.fitLabelToWidth(width - 36);
+    scene.time.delayedCall(0, () => this.fitLabelToWidth(width - 36));
     this.hitZone = scene.add.zone(0, 0, width, height).setOrigin(0.5);
     this.hitZone.setInteractive({ useHandCursor: true });
     this.visual = scene.add.container(0, 0, [this.background, this.label]);
@@ -64,7 +68,7 @@ export class Button extends Phaser.GameObjects.Container {
       this.background.setTint(value ? 0xffefbf : this.baseTint);
       this.background.setAlpha(value ? 1 : 0.96);
     }
-    this.label.setColor(value ? '#ffffff' : '#fff3d0');
+    this.label.setColor(this.getTextColor(this.variant, value));
     this.scene.tweens.killTweensOf(this.visual);
     this.scene.tweens.add({ targets: this.visual, scale: value ? 1.03 : 1, duration: 80 });
     return this;
@@ -98,5 +102,20 @@ export class Button extends Phaser.GameObjects.Container {
       return 'ui_button';
     }
     return undefined;
+  }
+
+  private getTextColor(variant: ButtonVariant, selected = false): string {
+    if (variant === 'primary') {
+      return selected ? '#2b1b08' : '#3a260c';
+    }
+    return selected ? '#ffe08a' : '#fff3d0';
+  }
+
+  private fitLabelToWidth(maxWidth: number): void {
+    let fontSize = Number.parseInt(String(this.label.style.fontSize), 10);
+    while (this.label.width > maxWidth && fontSize > 13) {
+      fontSize -= 1;
+      this.label.setFontSize(fontSize);
+    }
   }
 }

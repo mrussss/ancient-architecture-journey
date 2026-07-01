@@ -8,28 +8,30 @@ export class DialogueBox {
   private fullText = '';
   private visibleChars = 0;
   private elapsed = 0;
+  private lastRenderedText = '';
   private readonly charsPerSecond = 34;
 
   constructor(private scene: Phaser.Scene) {
     this.panel = scene.textures.exists('ui_dialog_panel')
-      ? scene.add.image(480, 432, 'ui_dialog_panel').setDisplaySize(850, 166).setAlpha(0.95).setDepth(30)
+      ? scene.add.image(480, 432, 'ui_dialog_panel').setDisplaySize(850, 176).setAlpha(0.95).setDepth(30)
       : scene.add.rectangle(480, 434, 840, 160, 0x11181c, 0.82).setStrokeStyle(2, 0xd7bd6a).setDepth(30);
-    this.speakerText = scene.add.text(90, 370, '', {
+    this.speakerText = scene.add.text(108, 360, '', {
       fontFamily: 'Arial, "Microsoft YaHei", sans-serif',
-      fontSize: '22px',
+      fontSize: '20px',
       color: '#ffe08a'
     }).setDepth(31);
-    this.bodyText = scene.add.text(90, 405, '', {
+    this.bodyText = scene.add.text(108, 392, '', {
       fontFamily: 'Arial, "Microsoft YaHei", sans-serif',
-      fontSize: '22px',
-      color: '#fff8e8',
-      wordWrap: { width: 780 },
-      lineSpacing: 5
+      fontSize: '19px',
+      color: '#efe2c5',
+      wordWrap: { width: 735 },
+      lineSpacing: 5,
+      fixedWidth: 735
     }).setDepth(31);
-    scene.add.text(720, 492, '空格 / 回车 / 点击', {
+    scene.add.text(735, 500, '空格 / 回车 / 点击', {
       fontFamily: 'Arial, "Microsoft YaHei", sans-serif',
-      fontSize: '14px',
-      color: '#cdd8c9'
+      fontSize: '13px',
+      color: '#c9d2c5'
     }).setDepth(31);
   }
 
@@ -38,6 +40,7 @@ export class DialogueBox {
     this.fullText = page.text;
     this.visibleChars = 0;
     this.elapsed = 0;
+    this.lastRenderedText = '';
     this.bodyText.setText('');
   }
 
@@ -47,7 +50,7 @@ export class DialogueBox {
     }
     this.elapsed += delta;
     this.visibleChars = Math.min(this.fullText.length, Math.floor((this.elapsed / 1000) * this.charsPerSecond));
-    this.bodyText.setText(this.fullText.slice(0, this.visibleChars));
+    this.renderBodyText(this.fullText.slice(0, this.visibleChars));
   }
 
   completeInstantly(): boolean {
@@ -55,7 +58,26 @@ export class DialogueBox {
       return false;
     }
     this.visibleChars = this.fullText.length;
-    this.bodyText.setText(this.fullText);
+    this.renderBodyText(this.fullText);
     return true;
+  }
+
+  private renderBodyText(text: string): void {
+    if (text === this.lastRenderedText) {
+      return;
+    }
+    this.lastRenderedText = text;
+    this.bodyText.setText(text);
+    this.fitBodyText();
+  }
+
+  private fitBodyText(): void {
+    const maxHeight = 86;
+    let fontSize = 19;
+    this.bodyText.setFontSize(fontSize);
+    while (this.bodyText.height > maxHeight && fontSize > 15) {
+      fontSize -= 1;
+      this.bodyText.setFontSize(fontSize);
+    }
   }
 }
