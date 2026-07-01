@@ -31,33 +31,35 @@ export class LevelCompleteScene extends Phaser.Scene {
     this.coverImage(bg);
     this.add.rectangle(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, WINDOW_WIDTH, WINDOW_HEIGHT, 0x050607, 0.36);
     const panelX = WINDOW_WIDTH / 2;
-    const panelY = WINDOW_HEIGHT / 2;
+    const panelY = WINDOW_HEIGHT / 2 + 12;
     this.add.image(panelX, panelY, 'ui_result_panel').setDisplaySize(640, 392).setAlpha(0.98);
-    this.add.text(WINDOW_WIDTH / 2, 112, `${level.title.split('：')[0]}完成`, {
+    this.add.text(WINDOW_WIDTH / 2, 54, `${level.title.split('：')[0]}完成`, {
       fontFamily: 'Arial, "Microsoft YaHei", sans-serif',
-      fontSize: '32px',
-      color: '#ffe08a'
+      fontSize: '34px',
+      color: '#ffe08a',
+      stroke: '#3a260c',
+      strokeThickness: 4
     }).setOrigin(0.5);
-    this.add.text(WINDOW_WIDTH / 2, 160, `残页归卷：${this.pagesCollected} / ${this.totalPages}`, {
+    this.add.text(WINDOW_WIDTH / 2, 190, `残页归卷：${this.pagesCollected} / ${this.totalPages}`, {
       fontFamily: 'Arial, "Microsoft YaHei", sans-serif',
       fontSize: '20px',
       color: '#e8dcc2'
     }).setOrigin(0.5);
-    this.add.text(WINDOW_WIDTH / 2 - 250, 205, this.summaryForLevel(this.levelId), {
+    this.add.text(WINDOW_WIDTH / 2 - 245, 232, this.summaryForLevel(this.levelId), {
       fontFamily: 'Arial, "Microsoft YaHei", sans-serif',
       fontSize: '17px',
       color: '#efe2c5',
       align: 'center',
-      wordWrap: { width: 500 },
-      fixedWidth: 500,
-      fixedHeight: 70,
+      wordWrap: { width: 490 },
+      fixedWidth: 490,
+      fixedHeight: 58,
       lineSpacing: 6
     }).setOrigin(0, 0);
-    new Button(this, WINDOW_WIDTH / 2, 312, 250, 48, '继续下一章', () => {
+    new Button(this, WINDOW_WIDTH / 2, 304, 230, 44, '继续下一章', () => {
       this.scene.start('StoryScene', { levelId: this.levelId + 1, storyType: 'intro', nextScene: 'GameScene' });
     }, 'primary');
-    new Button(this, WINDOW_WIDTH / 2, 368, 250, 44, '重访本章', () => this.scene.start('GameScene', { levelId: this.levelId }));
-    new Button(this, WINDOW_WIDTH / 2, 420, 250, 44, '返回选关', () => this.scene.start('LevelSelectScene'));
+    new Button(this, WINDOW_WIDTH / 2, 350, 220, 40, '重访本章', () => this.scene.start('GameScene', { levelId: this.levelId }));
+    new Button(this, WINDOW_WIDTH / 2, 396, 220, 40, '返回选关', () => this.scene.start('LevelSelectScene'));
   }
 
   private summaryForLevel(levelId: number): string {

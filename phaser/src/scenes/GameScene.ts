@@ -8,6 +8,7 @@ import { Enemy } from '../objects/Enemy';
 import { Player } from '../objects/Player';
 import { TilePlatform } from '../objects/TilePlatform';
 import { Trap } from '../objects/Trap';
+import { AchievementManager } from '../systems/AchievementManager';
 import { DebugOverlay } from '../ui/DebugOverlay';
 import { Hud } from '../ui/Hud';
 import { Button } from '../ui/Button';
@@ -39,6 +40,7 @@ export class GameScene extends Phaser.Scene {
   private pauseObjects: Phaser.GameObjects.GameObject[] = [];
   private pauseMusicText?: Phaser.GameObjects.Text;
   private pageCount = 0;
+  private damageTaken = 0;
   private completed = false;
   private pausedByMenu = false;
 
@@ -49,6 +51,7 @@ export class GameScene extends Phaser.Scene {
   init(data: GameSceneInitData): void {
     this.level = getLevel(data.levelId ?? 1);
     this.pageCount = 0;
+    this.damageTaken = 0;
     this.completed = false;
     this.pausedByMenu = false;
   }
@@ -123,8 +126,11 @@ export class GameScene extends Phaser.Scene {
     this.hud.update(this.player.hp, this.pageCount, this.level.pages.length);
 
     if (this.player.y > this.level.worldHeight + 110) {
-      if (this.player.damage(1) && !this.player.isDead()) {
-        this.player.respawn();
+      if (this.player.damage(1)) {
+        this.damageTaken += 1;
+        if (!this.player.isDead()) {
+          this.player.respawn();
+        }
       }
     }
 
@@ -256,8 +262,11 @@ export class GameScene extends Phaser.Scene {
   }
 
   private handleTrapHit(): void {
-    if (this.player.damage(1) && this.player.isDead()) {
-      this.scene.start('GameOverScene', { levelId: this.level.id });
+    if (this.player.damage(1)) {
+      this.damageTaken += 1;
+      if (this.player.isDead()) {
+        this.scene.start('GameOverScene', { levelId: this.level.id });
+      }
     }
   }
 
@@ -265,8 +274,11 @@ export class GameScene extends Phaser.Scene {
     if (!enemy.active) {
       return;
     }
-    if (this.player.damage(enemy.damageAmount) && this.player.isDead()) {
-      this.scene.start('GameOverScene', { levelId: this.level.id });
+    if (this.player.damage(enemy.damageAmount)) {
+      this.damageTaken += enemy.damageAmount;
+      if (this.player.isDead()) {
+        this.scene.start('GameOverScene', { levelId: this.level.id });
+      }
     }
   }
 
@@ -291,12 +303,19 @@ export class GameScene extends Phaser.Scene {
       return;
     }
     this.completed = true;
+    const newlyUnlocked = AchievementManager.recordLevelComplete(
+      this.pageCount,
+      this.level.pages.length,
+      this.damageTaken
+    );
     this.scene.start('StoryScene', {
       levelId: this.level.id,
       storyType: 'complete',
       nextScene: this.level.id >= 4 ? 'FinalScene' : 'LevelCompleteScene',
       pagesCollected: this.pageCount,
-      totalPages: this.level.pages.length
+      totalPages: this.level.pages.length,
+      damageTaken: this.damageTaken,
+      newlyUnlocked
     });
   }
 

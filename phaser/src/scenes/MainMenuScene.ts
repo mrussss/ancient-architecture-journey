@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { AudioManager } from '../audio/AudioManager';
 import { WINDOW_HEIGHT, WINDOW_WIDTH } from '../constants';
+import { AchievementManager } from '../systems/AchievementManager';
 import { Button } from '../ui/Button';
 
 export class MainMenuScene extends Phaser.Scene {
@@ -8,6 +9,7 @@ export class MainMenuScene extends Phaser.Scene {
   private audio!: AudioManager;
   private musicText!: Phaser.GameObjects.Text;
   private aboutContainer?: Phaser.GameObjects.Container;
+  private achievementContainer?: Phaser.GameObjects.Container;
   private selectedIndex = 0;
 
   constructor() {
@@ -25,21 +27,22 @@ export class MainMenuScene extends Phaser.Scene {
     this.add.rectangle(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, WINDOW_WIDTH, WINDOW_HEIGHT, 0x06080a, 0.24);
     this.add.image(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2 + 6, 'ui_menu_panel').setDisplaySize(760, 498).setAlpha(0.96);
 
-    this.add.text(WINDOW_WIDTH / 2, 82, '一跃千年：古建奇旅', {
+    this.add.text(WINDOW_WIDTH / 2, 124, '一跃千年：古建奇旅', {
       fontFamily: 'Arial, "Microsoft YaHei", sans-serif',
-      fontSize: '42px',
+      fontSize: '32px',
       color: '#ffe08a'
     }).setOrigin(0.5);
-    this.add.text(WINDOW_WIDTH / 2, 130, '残页归卷，古法重光', {
+    this.add.text(WINDOW_WIDTH / 2, 162, '残页归卷，古法重光', {
       fontFamily: 'Arial, "Microsoft YaHei", sans-serif',
-      fontSize: '24px',
+      fontSize: '21px',
       color: '#fff3d0'
     }).setOrigin(0.5);
 
     this.buttons = [
-      new Button(this, WINDOW_WIDTH / 2, 220, 300, 58, '开始旅程', () => this.startGame(), 'primary'),
-      new Button(this, WINDOW_WIDTH / 2, 288, 282, 52, '选择关卡', () => this.openLevelSelect()),
-      new Button(this, WINDOW_WIDTH / 2, 350, 282, 52, '作品说明', () => this.showAbout())
+      new Button(this, WINDOW_WIDTH / 2, 220, 300, 50, '开始旅程', () => this.startGame(), 'primary'),
+      new Button(this, WINDOW_WIDTH / 2, 275, 282, 46, '选择关卡', () => this.openLevelSelect()),
+      new Button(this, WINDOW_WIDTH / 2, 330, 282, 46, '成就', () => this.showAchievements()),
+      new Button(this, WINDOW_WIDTH / 2, 385, 282, 46, '作品说明', () => this.showAbout())
     ];
     this.createMusicControls();
 
@@ -71,39 +74,45 @@ export class MainMenuScene extends Phaser.Scene {
   private showAbout(): void {
     this.audio.playBgm();
     this.aboutContainer?.destroy(true);
+    this.achievementContainer?.destroy(true);
+    this.achievementContainer = undefined;
 
-    const shade = this.add.rectangle(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, WINDOW_WIDTH, WINDOW_HEIGHT, 0x000000, 0.54);
+    const shade = this.add.rectangle(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, WINDOW_WIDTH, WINDOW_HEIGHT, 0x000000, 0.78);
     shade.setInteractive();
-    const panel = this.add.image(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, 'ui_result_panel').setDisplaySize(760, 430).setAlpha(0.98);
-    const title = this.add.text(WINDOW_WIDTH / 2, 110, '作品说明', {
+    const panel = this.add.image(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2 + 12, 'ui_result_panel').setDisplaySize(760, 430).setAlpha(1);
+    const title = this.add.text(WINDOW_WIDTH / 2, 54, '作品说明', {
       fontFamily: 'Arial, "Microsoft YaHei", sans-serif',
-      fontSize: '34px',
-      color: '#ffe08a'
+      fontSize: '32px',
+      color: '#ffe08a',
+      stroke: '#3a260c',
+      strokeThickness: 4
     }).setOrigin(0.5);
     const body = this.add.text(
-      WINDOW_WIDTH / 2 - 300,
-      165,
+      WINDOW_WIDTH / 2 - 230,
+      150,
       [
         '作品名称：《一跃千年：古建奇旅》',
         '作品类型：中国古代建筑主题 2D 横版平台跳跃游戏',
         '',
-        '玩家扮演数字媒体专业学生“小研”，在古建筑数字化采集中发现残破古卷《营造法式》。残页散落在古桥、徽居、县署与太和殿四段建筑记忆中，玩家需要收集残页、避开机关、抵达传送门，让古法重光。',
+        '玩家扮演数字媒体专业学生“小研”，在古建筑数字化采集中发现残破古卷《营造法式》。',
+        '残页散落在古桥、徽居、县署与太和殿四段建筑记忆中。',
+        '玩家需要收集残页、避开机关、抵达传送门，让古法重光。',
         '',
         '技术路线：Vite + TypeScript + Phaser 3',
         '创作特色：章节式关卡、漫画式剧情、残页收集、古风 UI 包装'
       ].join('\n'),
       {
         fontFamily: 'Arial, "Microsoft YaHei", sans-serif',
-        fontSize: '16px',
+        fontSize: '15px',
         color: '#e8dcc2',
         align: 'left',
-        wordWrap: { width: 600 },
+        wordWrap: { width: 460 },
         lineSpacing: 6,
-        fixedWidth: 600,
-        fixedHeight: 230
+        fixedWidth: 460,
+        fixedHeight: 245
       }
     ).setOrigin(0, 0);
-    const closeButton = new Button(this, WINDOW_WIDTH / 2, 442, 220, 46, '返回主菜单', () => {
+    const closeButton = new Button(this, WINDOW_WIDTH / 2, 420, 210, 42, '返回主菜单', () => {
       this.aboutContainer?.destroy(true);
       this.aboutContainer = undefined;
     });
@@ -111,20 +120,71 @@ export class MainMenuScene extends Phaser.Scene {
     this.aboutContainer = this.add.container(0, 0, [shade, panel, title, body, closeButton]).setDepth(120);
   }
 
+  private showAchievements(): void {
+    this.audio.playBgm();
+    this.achievementContainer?.destroy(true);
+    this.aboutContainer?.destroy(true);
+    this.aboutContainer = undefined;
+
+    const shade = this.add.rectangle(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, WINDOW_WIDTH, WINDOW_HEIGHT, 0x000000, 0.78);
+    shade.setInteractive();
+    const panel = this.add.image(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2 + 12, 'ui_result_panel').setDisplaySize(760, 430).setAlpha(1);
+    const title = this.add.text(WINDOW_WIDTH / 2, 54, '成就', {
+      fontFamily: 'Arial, "Microsoft YaHei", sans-serif',
+      fontSize: '32px',
+      color: '#ffe08a',
+      stroke: '#3a260c',
+      strokeThickness: 4
+    }).setOrigin(0.5);
+
+    const rows: Phaser.GameObjects.GameObject[] = [];
+    AchievementManager.list().forEach((achievement, index) => {
+      const y = 165 + index * 92;
+      const iconKey =
+        achievement.unlocked && this.textures.exists('ui_achievement_badge')
+          ? 'ui_achievement_badge'
+          : this.textures.exists('ui_achievement_badge_locked')
+            ? 'ui_achievement_badge_locked'
+            : 'icon_page';
+      const icon = this.add.image(270, y + 12, iconKey).setDisplaySize(48, 48);
+      const name = this.add.text(320, y - 8, `${achievement.unlocked ? '已解锁' : '未解锁'} · ${achievement.title}`, {
+        fontFamily: 'Arial, "Microsoft YaHei", sans-serif',
+        fontSize: '20px',
+        color: achievement.unlocked ? '#ffe08a' : '#c9d2c5',
+        fixedWidth: 360
+      });
+      const desc = this.add.text(320, y + 24, achievement.description, {
+        fontFamily: 'Arial, "Microsoft YaHei", sans-serif',
+        fontSize: '15px',
+        color: '#efe2c5',
+        wordWrap: { width: 360 },
+        fixedWidth: 360
+      });
+      rows.push(icon, name, desc);
+    });
+
+    const closeButton = new Button(this, WINDOW_WIDTH / 2, 420, 210, 42, '返回主菜单', () => {
+      this.achievementContainer?.destroy(true);
+      this.achievementContainer = undefined;
+    });
+
+    this.achievementContainer = this.add.container(0, 0, [shade, panel, title, ...rows, closeButton]).setDepth(130);
+  }
+
   private createMusicControls(): void {
-    this.add.text(WINDOW_WIDTH / 2, 398, '音乐音量', {
+    this.add.text(WINDOW_WIDTH / 2, 413, '音乐音量', {
       fontFamily: 'Arial, "Microsoft YaHei", sans-serif',
       fontSize: '16px',
       color: '#dce6d6'
     }).setOrigin(0.5);
-    this.musicText = this.add.text(WINDOW_WIDTH / 2, 421, '', {
+    this.musicText = this.add.text(WINDOW_WIDTH / 2, 434, '', {
       fontFamily: 'Arial, "Microsoft YaHei", sans-serif',
       fontSize: '18px',
       color: '#fff3d0'
     }).setOrigin(0.5);
-    new Button(this, WINDOW_WIDTH / 2 - 118, 458, 54, 34, '-', () => this.changeVolume(-0.1), 'small');
-    new Button(this, WINDOW_WIDTH / 2 - 52, 458, 54, 34, '+', () => this.changeVolume(0.1), 'small');
-    new Button(this, WINDOW_WIDTH / 2 + 58, 458, 108, 34, '静音', () => this.toggleMute(), 'small');
+    new Button(this, WINDOW_WIDTH / 2 - 118, 468, 54, 34, '-', () => this.changeVolume(-0.1), 'small');
+    new Button(this, WINDOW_WIDTH / 2 - 52, 468, 54, 34, '+', () => this.changeVolume(0.1), 'small');
+    new Button(this, WINDOW_WIDTH / 2 + 58, 468, 108, 34, '静音', () => this.toggleMute(), 'small');
     this.updateMusicText();
   }
 

@@ -66,6 +66,8 @@ export const imageAssets: ImageAsset[] = [
   { key: 'ui_hud_panel', path: 'assets/images/ui/hud_panel.png' },
   { key: 'ui_result_panel', path: 'assets/images/ui/result_panel.png' },
   { key: 'ui_dialog_panel', path: 'assets/images/ui/dialog_panel.png' },
+  { key: 'ui_achievement_badge', path: 'assets/images/ui/achievement_badge.png' },
+  { key: 'ui_achievement_badge_locked', path: 'assets/images/ui/achievement_badge_locked.png' },
   { key: 'icon_heart_full', path: 'assets/images/icons/heart_full.png' },
   { key: 'icon_heart_empty', path: 'assets/images/icons/heart_empty.png' },
   { key: 'icon_page', path: 'assets/images/icons/page_icon.png' },
